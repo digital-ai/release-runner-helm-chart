@@ -1,0 +1,42 @@
+{{- if .Values.persistence.enabled }}
+{{- $replicas := until (.Values.replicaCount | int) }}
+{{- $persistence := .Values.persistence -}}
+{{- $global := .Values.global -}}
+{{- $labels := .Values.commonLabel -}}
+{{- $annotations := .Values.commonAnnotations -}}
+{{- $resourceName := include "common.names.fullname" . -}}
+{{- $namespace := include "names.namespace" . | quote -}}
+{{- $namespaceNotQuoted := include "names.namespace" . -}}
+{{- $values := . -}}
+{{- range $index := $replicas -}}
+{{- if or $global.persistence.createVolume $persistence.db.volume.create }}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: job-runner-db-{{ $resourceName }}-{{ $index }}
+  namespace: {{ $namespace }}
+  labels: {{- include "common.labels.standard" $values | nindent 4 }}
+    {{- if $labels }}
+    {{- include "common.tplvalues.render" ( dict "value" $labels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if $annotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" $annotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  {{ include "common.storage.class" (dict "persistence" $persistence.db "global" $global.persistence) }}
+  capacity:
+    storage: {{ $persistence.db.volume.size }}
+  accessModes:
+    {{- range $persistence.db.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  hostPath:
+    path: "{{ required "Use --set persistence.db.volume.baseHostPath=<value> or --set global.persistence.baseHostPath=<value> to define remote-runner host path" (default $global.persistence.baseHostPath $persistence.db.volume.baseHostPath) }}/db/{{ $namespaceNotQuoted }}/{{ $resourceName }}/{{ $index }}"
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    name: job-runner-db-{{ $resourceName }}-{{ $index }}
+    namespace: {{ $namespace }}
+{{- end }}
+{{- end }}
+{{- end }}

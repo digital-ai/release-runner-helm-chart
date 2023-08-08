@@ -1,0 +1,275 @@
+{{- $serviceName := printf "%s-headless" (include "common.names.fullname" .) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $serviceName }}
+  namespace: {{ include "names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.statefulsetLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  clusterIP: None
+  selector:
+    app: {{ include "common.names.fullname" . }}
+---
+apiVersion: {{ include "common.capabilities.statefulset.apiVersion" . }}
+kind: StatefulSet
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  namespace: {{ include "names.namespace" . | quote }}
+  labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.statefulsetLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.commonLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
+spec:
+  serviceName: {{ $serviceName }}
+  podManagementPolicy: {{ .Values.podManagementPolicy }}
+  replicas: {{ .Values.replicaCount }}
+  {{- if .Values.updateStrategy }}
+  updateStrategy: {{- toYaml .Values.updateStrategy | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+      app: {{ include "common.names.fullname" . }}
+  template:
+    metadata:
+      labels: {{- include "common.labels.standard" . | nindent 8 }}
+        {{- if .Values.podLabels }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.podLabels "context" $) | nindent 8 }}
+        {{- end }}
+        app: {{ include "common.names.fullname" . }}
+      annotations:
+        {{- if .Values.commonAnnotations }}
+        {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 8 }}
+        {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmaps.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- if .Values.podAnnotations }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName | quote }}
+      {{- end }}
+      serviceAccountName: {{ template "names.serviceAccountName" . }}
+      {{- if .Values.affinity }}
+      affinity: {{- include "common.tplvalues.render" (dict "value" .Values.affinity "context" .) | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAffinityPreset "context" $) | nindent 10 }}
+        podAntiAffinity: {{- include "common.affinities.pods" (dict "type" .Values.podAntiAffinityPreset "context" $) | nindent 10 }}
+        nodeAffinity: {{- include "common.affinities.nodes" (dict "type" .Values.nodeAffinityPreset.type "key" .Values.nodeAffinityPreset.key "values" .Values.nodeAffinityPreset.values) | nindent 10 }}
+      {{- end }}
+      {{- if .Values.hostAliases }}
+      hostAliases: {{- include "common.tplvalues.render" (dict "value" .Values.hostAliases "context" $) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{- include "common.tplvalues.render" (dict "value" .Values.nodeSelector "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations: {{- include "common.tplvalues.render" (dict "value" .Values.tolerations "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.topologySpreadConstraints }}
+      topologySpreadConstraints: {{- include "common.tplvalues.render" (dict "value" .Values.topologySpreadConstraints "context" .) | nindent 8 }}
+      {{- end }}
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+      {{- if .Values.podSecurityContext.enabled }}
+      securityContext: {{- omit .Values.podSecurityContext "enabled" | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if .Values.dnsPolicy }}
+      dnsPolicy: {{ .Values.dnsPolicy }}
+      {{- end }}
+      {{- if .Values.dnsConfig }}
+      dnsConfig: {{- include "common.tplvalues.render" (dict "value" .Values.dnsConfig "context" .) | nindent 8 }}
+      {{- end }}
+      hostNetwork: {{ .Values.hostNetwork }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if (not (empty .Values.image.pullSecrets)) }}
+      imagePullSecrets:
+        {{- range .Values.image.pullSecrets }}
+        - name: {{ . }}
+        {{- end }}
+      {{- end }}
+      {{- if or .Values.global.persistence.createVolume .Values.persistence.db.volume.create }}
+      initContainers:
+        - name: set-volume-permissions
+          image: {{ include "images.image" (dict "imageRoot" .Values.image) }}
+          command:
+            - sh
+            - -c
+            {{- if .Values.persistence.db.volume.create }}
+            - chmod -R 777 /workspace/db
+            {{- end }}
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /workspace/db
+              name: job-runner-db
+              readOnly: false
+          securityContext:
+              privileged: true
+              runAsUser: 0
+      {{- end }}
+      containers:
+        - name: remote-runner
+          image: {{ include "images.image" (dict "imageRoot" .Values.image) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- if .Values.containerSecurityContext.enabled }}
+          securityContext: {{- omit .Values.containerSecurityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 12 }}
+          {{- else if .Values.command }}
+          command: {{- include "common.tplvalues.render" (dict "value" .Values.command "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.diagnosticMode.enabled }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 12 }}
+          {{- else if .Values.args }}
+          args: {{- include "common.tplvalues.render" (dict "value" .Values.args "context" $) | nindent 12 }}
+          {{- end }}
+          {{- if .Values.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
+          env:
+            - name: RELEASE_RUNNER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: RELEASE_RUNNER_KUBERNETES_SERVICE_NAME
+              value: {{ $serviceName }}
+            - name: RELEASE_RUNNER_RELEASE_URL
+              value: "{{ required "Use --set release.url=<value> to define the Digital.ai Release URL" .Values.release.url }}"
+            - name: RELEASE_RUNNER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-registration-token
+                  key: token
+            - name: RELEASE_RUNNER_CAPABILITIES
+              value: {{ .Values.runner.capabilities }}
+            - name: RELEASE_RUNNER_KUBERNETES_NAMESPACE
+              value: {{ include "names.namespace" . | quote }}
+            {{- if .Values.hostNetwork }} ## TODO check this - we generate random port hostNetwork should be always true
+            - name: SERVER_PORT
+              value: "0"
+            {{- end }}
+            - name: RELEASE_RUNNER_PROFILE
+              value: "{{ .Values.runner.activeProfiles }}"
+            - name: RELEASE_RUNNER_KUBERNETES_IN_CLUSTER_CONFIG
+              value: "true"
+            - name: RELEASE_RUNNER_STORE_NAME
+              value: "/workspace/db/runner-store.db"
+            {{- if .Values.runner.truststore }}
+            - name: RELEASE_RUNNER_REST_CLIENT_TRUSTSTORE
+              value: "/workspace/truststore.p12"
+            - name: RELEASE_RUNNER_REST_CLIENT_TRUSTSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "common.names.fullname" . }}-truststore
+                  key: password
+            {{- end}}
+            {{- if .Values.extraEnvVars }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "common.names.fullname" . }}-env-config
+                optional: true
+            {{- if .Values.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsCM "context" $) }}
+            {{- end }}
+            {{- if .Values.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ include "common.tplvalues.render" (dict "value" .Values.extraEnvVarsSecret "context" $) }}
+            {{- end }}
+          {{- if not .Values.diagnosticMode.enabled }}
+          {{- if and .Values.health.enabled (not .Values.hostNetwork) }}
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: 8686
+            initialDelaySeconds: {{ .Values.health.probesLivenessTimeout }}
+            periodSeconds: {{ .Values.health.periodScans }}
+            failureThreshold: {{ .Values.health.probeFailureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8686
+            initialDelaySeconds: {{ .Values.health.probesReadinessTimeout }}
+            periodSeconds: {{ .Values.health.periodScans }}
+            failureThreshold: {{ .Values.health.probeFailureThreshold }}
+          {{- end }}
+          {{- end }}
+          {{- if .Values.resources }}
+          resources: {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - mountPath: /workspace/db
+              name: job-runner-db
+              readOnly: false
+            {{- if .Values.runner.truststore }}
+            - mountPath: /workspace/truststore.p12
+              name: release-remote-runner-truststore
+              subPath: truststore.p12
+              readOnly: true
+            {{- end }}
+            {{- if .Values.extraVolumeMounts }}
+            {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- if .Values.runner.truststore }}
+        - name: release-remote-runner-truststore
+          secret:
+            secretName: {{ include "common.names.fullname" . }}-truststore
+        {{- end}}
+        {{- if .Values.extraVolumes }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $)  | nindent 8 }}
+        {{- end }}
+        {{- if not .Values.persistence.enabled }}
+        - name: job-runner-db
+          emptyDir: { }
+        {{- else if .Values.persistence.db.existingClaim }}
+        - name: job-runner-db
+          persistentVolumeClaim:
+            {{- with .Values.persistence.db.existingClaim }}
+            claimName: {{ tpl . $ }}
+            {{- end }}
+        {{- end }}
+  volumeClaimTemplates:
+  {{- if and .Values.persistence.enabled (not .Values.persistence.db.existingClaim) }}
+  - metadata:
+      name: job-runner-db
+      labels: {{- include "common.labels.matchLabels" . | nindent 10 }}
+      {{- if .Values.persistence.db.annotations }}
+      annotations:
+        {{- include "common.tplvalues.render" ( dict "value" .Values.persistence.db.annotations "context" $) | nindent 10 }}
+      {{- end }}
+    spec:
+      {{ include "common.storage.class" (dict "persistence" .Values.persistence.db "global" .Values.global.persistence) }}
+      accessModes:
+          {{- range .Values.persistence.db.accessModes }}
+        - {{ . | quote }}
+          {{- end }}
+      resources:
+        requests:
+          storage: {{ .Values.persistence.db.size }}
+      {{- if .Values.persistence.db.selector }}
+      selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.db.selector "context" $) | nindent 10 }}
+      {{- end -}}
+  {{- end }}

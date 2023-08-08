@@ -1,0 +1,17 @@
+apiVersion: v2
+name: remote-runner
+description: A Helm chart for remote-runner
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates
+version: 0.1.0
+
+appVersion: 0.1.0
+
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.17.X

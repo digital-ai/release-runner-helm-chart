@@ -1,0 +1,410 @@
+## @section Global parameters
+##
+
+global:
+  persistence:
+    ## @param global.persistence.storageClass PVC Storage Class for Remote Runner data volume
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    storageClass: ""
+    ## @param global.persistence.createVolume Provide for created claims explicit volume creation withing chart.
+    ## If set to "true", baseHostPath needs to be set too.
+    createVolume: false
+    ## @param global.persistence.baseHostPath The host path for the k3d cluster.
+    ## It is not required if you are installing remote runner in the cloud (AWS, Azure or GCP).
+    ## If set, creating the PV with specified hostPath.
+    baseHostPath:
+
+## @section Digital.ai Release Remote Runner parameters
+##
+
+runner:
+  ## @param runner.activeProfiles is used to change the active spring profile.
+  activeProfiles: "k8s"
+  ## @param runner.capabilities comma separated list of capabilities for the remote runner
+  capabilities: "remote,container,k8s"
+  ## @param runner.truststore the truststore base64 encoded value
+  truststore:
+  ## @param runner.truststorePassword the truststore password
+  truststorePassword:
+  ## @param runner.config [object] Map configuration variables that are set in the config map and used as environment
+  config:
+
+
+## @section Digital.ai Release parameters
+##
+
+release:
+  ## @param release.registrationToken is the token you create in Release that the runner will use to register itself.
+  registrationToken:
+  ## @param release.url is the url of your release instance.
+  url:
+
+## @section Persistence parameters
+##
+
+persistence:
+  ## @param persistence.enabled Enable Remote Runner data persistence using PVC
+  ##
+  enabled: true
+  db:
+    ## @param persistence.db.storageClass PVC Storage Class for Remote Runner data volume
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    storageClass: ""
+    ## @param persistence.db.selector Selector to match an existing Persistent Volume
+    ## selector:
+    ##   matchLabels:
+    ##     app: my-app
+    ##
+    selector: { }
+    ## @param persistence.db.accessModes PVC Access Modes for Remote Runner data volume
+    ##
+    accessModes:
+      - ReadWriteOnce
+    ## @param persistence.db.existingClaim Provide an existing PersistentVolumeClaims
+    ## The value is evaluated as a template
+    ## So, for example, the name can depend on .Release or .Chart
+    ##
+    existingClaim: ""
+    ## @param persistence.db.size PVC Storage Request for DB storage
+    ##
+    size: 256Mi
+    volume:
+      ## @param persistence.db.volume.create Provide for created claims explicit volume creation withing chart.
+      ## If set to "true", baseHostPath needs to be set too.
+      ##
+      create: false
+      ## @param persistence.db.volume.baseHostPath The host path for the k3d cluster.
+      ## It is not required if you are installing remote runner in the cloud (AWS, Azure or GCP).
+      ## If set, creating the PV with specified hostPath.
+      baseHostPath:
+      ## @param persistence.db.volume.size PV Storage Capacity for DB storage
+      size: 1Gi
+    ## @param persistence.db.annotations [object] Persistence annotations. Evaluated as a template
+    ## Example:
+    ## annotations:
+    ##   example.io/disk-volume-type: SSD
+    ##
+    annotations:
+      helm.sh/resource-policy: "keep"
+
+## @section Image parameters
+##
+
+image:
+  ## @param image.pullPolicy Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## @param image.registry Remote runner image registry
+  registry: docker.io
+  ## @param image.repository runner image repository
+  repository: xebialabs
+  ## @param image.name Remote runner image name
+  name: release-remote-runner
+  ## @param image.tag Remote runner image tag
+  tag: 0.1.0
+  ## @param image.pullSecrets Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example to create a secret:
+  ## `kubectl create secret docker-registry regcred --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>`
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: [ ]
+
+## @section Common parameters
+##
+
+## @param nameOverride String to partially override release.fullname template (will maintain the release name)
+##
+nameOverride: ""
+## @param fullnameOverride String to fully override release.fullname template
+##
+fullnameOverride: ""
+## @param commonAnnotations Annotations to add to all deployed objects
+##
+commonAnnotations: { }
+## @param commonLabels Labels to add to all deployed objects
+##
+commonLabels: { }
+## Enable creation and installation in the custom namespace
+##
+## @param namespaceOverride String to fully override namespace
+##
+namespaceOverride:
+namespace:
+  ## @param namespace.create enable creation in the custom namespace
+  ##
+  create: false
+  ## @param namespace.annotations Annotations to add to all namespace resource
+  ##
+  annotations: { }
+## Enable diagnostic mode in the deployment
+##
+diagnosticMode:
+  ## @param diagnosticMode.enabled Enable diagnostic mode (all probes will be disabled and the command will be overridden)
+  ##
+  enabled: false
+  ## @param diagnosticMode.command Command to override all containers in the deployment
+  ##
+  command:
+    - sleep
+  ## @param diagnosticMode.args Args to override all containers in the deployment
+  ##
+  args:
+    - infinity
+
+
+## @section Statefulset parameters
+##
+
+## @param schedulerName Use an alternate scheduler, e.g. "stork".
+## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
+##
+schedulerName: ""
+## Remote Runner can be initialized in parallel when building cluster.
+## Therefore, the default value of podManagementPolicy is 'OrderedReady'
+## @param podManagementPolicy Pod management policy
+##
+podManagementPolicy: Parallel
+## @param podLabels Remote Runner Pod labels. Evaluated as a template
+## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+podLabels: {}
+## @param podAnnotations Remote Runner Pod annotations. Evaluated as a template
+## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+##
+podAnnotations: {}
+## @param replicaCount Number of Remote Runner replicas to deploy
+##
+replicaCount: 1
+## @param updateStrategy.type Update strategy type for Remote Runner statefulset
+## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
+##
+updateStrategy:
+  ## StrategyType
+  ## Can be set to RollingUpdate or OnDelete
+  ##
+  type: RollingUpdate
+## @param statefulsetLabels Remote Runner statefulset labels. Evaluated as a template
+## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+##
+statefulsetLabels: {}
+## @param priorityClassName Name of the priority class to be used by Remote Runner pods, priority class needs to be created beforehand
+## Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+##
+priorityClassName: ""
+## @param podAffinityPreset Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAffinityPreset: ""
+## @param podAntiAffinityPreset Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+##
+podAntiAffinityPreset: soft
+## Node affinity preset
+## Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+##
+nodeAffinityPreset:
+  ## @param nodeAffinityPreset.type Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`
+  ##
+  type: ""
+  ## @param nodeAffinityPreset.key Node label key to match Ignored if `affinity` is set.
+  ## E.g.
+  ## key: "kubernetes.io/e2e-az-name"
+  ##
+  key: ""
+  ## @param nodeAffinityPreset.values Node label values to match. Ignored if `affinity` is set.
+  ## E.g.
+  ## values:
+  ##   - e2e-az1
+  ##   - e2e-az2
+  ##
+  values: []
+
+## @param affinity Affinity for pod assignment. Evaluated as a template
+## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+## Note: podAffinityPreset, podAntiAffinityPreset, and  nodeAffinityPreset will be ignored when it's set
+##
+affinity: { }
+## @param nodeSelector Node labels for pod assignment. Evaluated as a template
+## ref: https://kubernetes.io/docs/user-guide/node-selection/
+##
+nodeSelector: { }
+## @param tolerations Tolerations for pod assignment. Evaluated as a template
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: [ ]
+## @param topologySpreadConstraints Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template
+## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/#spread-constraints-for-pods
+##
+topologySpreadConstraints: [ ]
+
+## Remote Runner pods' Security Context
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
+## @param podSecurityContext.enabled Enable Remote Runner pods' Security Context
+## @param podSecurityContext.runAsUser Set Remote Runner pod's Security Context runAsUser
+## @param podSecurityContext.runAsGroup Set Remote Runner pod's Security Context runAsGroup
+## @param podSecurityContext.fsGroup Set Remote Runner pod's Security Context fsGroup
+##
+podSecurityContext:
+  enabled: false
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+
+## @param containerSecurityContext.enabled Enabled Remote Runner containers' Security Context
+## @param containerSecurityContext.runAsUser Set Remote Runner containers' Security Context runAsUser
+## @param containerSecurityContext.runAsNonRoot Set Remote Runner container's Security Context runAsNonRoot
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+## Example:
+##   containerSecurityContext:
+##     capabilities:
+##       drop: ["NET_RAW"]
+##     readOnlyRootFilesystem: true
+##
+containerSecurityContext:
+  enabled: false
+  runAsUser: 1001
+  runAsNonRoot: true
+
+## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
+## Examples:
+## extraVolumeMounts:
+##   - name: extras
+##     mountPath: /usr/share/extras
+##     readOnly: true
+##
+extraVolumeMounts: []
+## @param extraVolumes Optionally specify extra list of additional volumes .
+## Example:
+## extraVolumes:
+##   - name: extras
+##     emptyDir: {}
+##
+extraVolumes: []
+
+
+## @param hostAliases Deployment pod host aliases
+## https://kubernetes.io/docs/concepts/services-networking/add-entries-to-pod-etc-hosts-with-host-aliases/
+##
+hostAliases: []
+## @param dnsPolicy DNS Policy for pod
+## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+## E.g.
+## dnsPolicy: ClusterFirst
+dnsPolicy: "ClusterFirst"
+## @param hostNetwork allows a pod to use the node network namespace. If enabled health monitoring will be disabled because of port conflict on the same node.
+hostNetwork: false
+## @param dnsConfig DNS Configuration pod
+## ref: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+## E.g.
+## dnsConfig:
+##   options:
+##   - name: ndots
+##     value: "4"
+dnsConfig: {}
+
+## @param command Override default container command (useful when using custom images)
+##
+command:
+## @param args Override default container args (useful when using custom images)
+##
+args:
+## @param lifecycleHooks Overwrite livecycle for the Remote Runner container(s) to automate configuration before or after startup
+##
+lifecycleHooks: {}
+## @param terminationGracePeriodSeconds Default duration in seconds k8s waits for container to exit before sending kill signal.
+## Any time in excess of 10 seconds will be spent waiting for any synchronization necessary for cluster not to lose data.
+##
+terminationGracePeriodSeconds: 200
+## @param extraEnvVars Extra environment variables to add to Remote Runner pods
+## E.g:
+## extraEnvVars:
+##   - name: FOO
+##     value: BAR
+##
+extraEnvVars: [ ]
+## @param extraEnvVarsCM Name of existing ConfigMap containing extra environment variables
+##
+extraEnvVarsCM: ""
+## @param extraEnvVarsSecret Name of existing Secret containing extra environment variables (in case of sensitive data)
+##
+extraEnvVarsSecret: ""
+
+health:
+  ## @param health.enabled Enable health monitoring with readiness and liveness probes based on the remote runner actuator management endpoints
+  enabled: true
+  ## @param health.periodScans Defines how frequently the probe will be executed after the initial delay.
+  periodScans: 5
+  ## @param health.probeFailureThreshold Instructs Kubernetes to retry the probe this many times after a failure is first recorded.
+  probeFailureThreshold: 12
+  ## @param health.probesLivenessTimeout Set a delay between the time the container starts and the first time the probe is executed.
+  probesLivenessTimeout: 10
+  ## @param health.probesReadinessTimeout Set a delay between the time the container starts and the first time the probe is executed.
+  probesReadinessTimeout: 10
+
+## Remote Runner containers' resource requests and limits
+## ref: https://kubernetes.io/docs/user-guide/compute-resources/
+## We usually recommend not to specify default resources and to leave this as a conscious
+## choice for the user. This also increases chances charts run on environments with little
+## resources, such as Minikube. If you do want to specify resources, uncomment the following
+## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+##
+resources:
+  ## @param resources.limits [object] The resources limits for Remote Runner containers
+  ## Example:
+  ## limits:
+  ##    cpu: 2
+  ##    memory: 2Gi
+  ##
+  limits:
+    cpu: "4"
+    memory: 1G
+  ## @param resources.requests [object] The requested resources for Remote Runner containers
+  ## Examples:
+  ## requests:
+  ##    cpu: 100m
+  ##    memory: 2Gi
+  ##
+  requests:
+    cpu: "0.5"
+    memory: 512Mi
+
+
+## @section RBAC parameters
+##
+
+## Remote Runner pods ServiceAccount
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
+serviceAccount:
+  ## @param serviceAccount.create Enable creation of ServiceAccount for Remote Runner pods
+  ##
+  create: true
+  ## @param serviceAccount.name Name of the created serviceAccount
+  ## If not set and create is true, a name is generated using the release.fullname template
+  ##
+  name: ""
+  ## @param serviceAccount.annotations Annotations for service account. Evaluated as a template. Only used if `create` is `true`.
+  ##
+  annotations: { }
+## Role Based Access
+## ref: https://kubernetes.io/docs/admin/authorization/rbac/
+##
+rbac:
+  ## @param rbac.create Whether RBAC rules should be created binding Remote Runner ServiceAccount to a role that allows Remote Runner pods querying the K8s API
+  ##
+  create: true
