@@ -164,10 +164,6 @@ spec:
               value: {{ .Values.runner.capabilities }}
             - name: RELEASE_RUNNER_KUBERNETES_NAMESPACE
               value: {{ include "names.namespace" . | quote }}
-            {{- if .Values.hostNetwork }} ## TODO check this - we generate random port hostNetwork should be always true
-            - name: SERVER_PORT
-              value: "0"
-            {{- end }}
             - name: RELEASE_RUNNER_PROFILE
               value: "{{ .Values.runner.activeProfiles }}"
             - name: RELEASE_RUNNER_KUBERNETES_IN_CLUSTER_CONFIG
