@@ -1,0 +1,45 @@
+# Default values for a k8s template for remote runner to use in cloud connector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  persistence:
+    baseHostPath: "${RUNNER_VOLUME_BASE_HOST_PATH}"
+
+release:
+  registrationToken: "${RUNNER_REGISTRATION_TOKEN}"
+  url: "${RELEASE_URL}"
+
+runner:
+  activeProfiles: "k8s,json-logging"
+
+persistence:
+  db:
+    size: "${RUNNER_DB_VOLUME_REQUESTS_STORAGE}"
+    accessModes:
+      - "ReadWriteOnce"
+    volume:
+      size: "${RUNNER_DB_VOLUME_CAPACITY_STORAGE}"
+
+image:
+  registry:
+  repository:
+  name: "${AGENT_IMAGE_release-remote-runner}"
+  tag:
+
+namespaceOverride: "${DAI_NAMESPACE}"
+namespace:
+  create: true
+  annotations:
+    agents.digitalai.cloud/id: "${DAI_AGENT_ID}"
+
+dnsPolicy: Default
+hostNetwork: true
+
+resources:
+  requests:
+    cpu: "${RUNNER_REQUESTS_CPU}"
+    memory: "${RUNNER_REQUESTS_MEMORY}"
+  limits:
+    cpu: "${RUNNER_LIMITS_CPU}"
+    memory: "${RUNNER_LIMITS_MEMORY}"
