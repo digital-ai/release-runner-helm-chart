@@ -1,0 +1,35 @@
+name: Publish Helm Chart (Nexus)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chart Checkout
+        uses: actions/checkout@v3
+      - name: Helm Installation
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.7.0
+      - name: Helm Repository Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true
+          ref: master
+      - name: Helm Package
+        run: |
+          CHART_VERSION=$(helm show chart . | grep "^version:" | awk '$1 { print $2 }')
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm dependency update
+          helm package . --version "$CHART_VERSION" -d build
+          echo "chart_version=$CHART_VERSION" >> $GITHUB_ENV
+      - name: Helm Publish (Nexus)
+        run: |
+          curl -k -u ${{ secrets.DAI_AGENT_CONTRIB_USER }}:${{ secrets.DAI_AGENT_CONTRIB_PASSWORD }} \
+          https://nexus.usw2mgt.dev.digitalai.cloud/repository/helm-development/ \
+          --upload-file build/remote-runner-${{ env.chart_version }}.tgz -v

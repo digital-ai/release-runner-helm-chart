@@ -1,0 +1,10 @@
+Release Remote runner is installed in the {{ include "names.namespace" . | quote }} namespace. It is connecting on the Release server {{ .Values.release.url }}.
+It has installation with:
+- {{ .Values.replicaCount}} replica(s)
+- capabilities: {{ .Values.runner.capabilities}}
+
+To check release remote runner logs run:
+kubectl logs -n {{ include "names.namespace" . | quote }} sts/{{ include "common.names.fullname" . }}
+
+To restart STS run:
+kubectl rollout restart -n {{ include "names.namespace" . | quote }} sts/{{ include "common.names.fullname" . }}

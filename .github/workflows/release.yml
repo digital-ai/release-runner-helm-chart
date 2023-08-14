@@ -1,0 +1,60 @@
+name: Release Helm Chart
+
+on:
+  release:
+    types: [released, prereleased]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chart Checkout
+        uses: actions/checkout@v3
+      - name: Helm Installation
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.11.3
+      - name: Helm Repository Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true
+          ref: master
+      - name: Setup Env
+        run: |
+          CHART_VERSION=$(helm show chart . | grep "^version:" | awk '$1 { print $2 }')
+          CHART_PACKAGE_NAME="release-remote-runner-$CHART_VERSION"
+          echo "CHART_VERSION=$CHART_VERSION" >> "$GITHUB_ENV"
+          echo "CHART_PACKAGE_NAME=$CHART_PACKAGE_NAME" >> "$GITHUB_ENV"
+      - name: Helm Package (GCR)
+        env:
+          # experimental feature
+          HELM_EXPERIMENTAL_OCI: 1
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GCR_IMAGE: ghcr.io/${{ github.repository_owner }}/release-remote-runner-helm-chart
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm dependency update
+          helm package . --version "${{ env.CHART_VERSION }}" -d build
+          echo ${{ env.GITHUB_TOKEN }} | helm registry login ${{ env.GCR_IMAGE }} --username ${{ github.repository_owner }} --password-stdin
+          helm push build/${{ env.CHART_PACKAGE_NAME }}.tgz oci://${{ env.GCR_IMAGE }}
+      - name: Upload Release Helm Chart
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: build/${{ env.CHART_PACKAGE_NAME }}.tgz
+          asset_name: ${{ env.CHART_PACKAGE_NAME }}.tgz
+          asset_content_type: application/gzip
+      - name: Generate Index
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          helm repo index ./build --merge ./build/index.yaml --url ${{ github.event.release.upload_url }}
+          mv ./build/index.yaml ./
+          git add index.yaml
+          git commit -m "release $CHART_PACKAGE_NAME"
+          git push origin master

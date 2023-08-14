@@ -1,0 +1,39 @@
+name: Publish Helm Chart (Docker)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chart Checkout
+        uses: actions/checkout@v3
+      - name: Helm Installation
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.11.3
+      - name: Helm Repository Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          persist-credentials: true
+          ref: master
+      - name: Helm Package (Docker)
+        env:
+          # experimental feature
+          HELM_EXPERIMENTAL_OCI: 1
+          XEBIALABS_DOCKER_HUB_USER: ${{ secrets.XEBIALABS_DOCKER_HUB_USER }}
+          XEBIALABS_DOCKER_HUB_PASSWORD: ${{ secrets.XEBIALABS_DOCKER_HUB_PASSWORD }}
+          DH_IMAGE: registry-1.docker.io/xldevdocker/release-remote-runner-helm-chart
+        run: |
+          CHART_VERSION=$(helm show chart . | grep "^version:" | awk '$1 { print $2 }')
+          CHART_PACKAGE_NAME="remote-runner-$CHART_VERSION"
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+          helm dependency update
+          echo ${{ env.XEBIALABS_DOCKER_HUB_USER }}
+          helm package . --version "$CHART_VERSION" -d build
+          echo ${{ env.XEBIALABS_DOCKER_HUB_PASSWORD }} | helm registry login ${{ env.DH_IMAGE }} --username ${{ env.XEBIALABS_DOCKER_HUB_USER }} --password-stdin
+          helm push build/$CHART_PACKAGE_NAME.tgz oci://${{ env.DH_IMAGE }}
