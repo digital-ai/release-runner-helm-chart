@@ -2,24 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-global:
-  persistence:
-    baseHostPath: "${RUNNER_VOLUME_BASE_HOST_PATH}"
-
 release:
   registrationToken: "${RUNNER_REGISTRATION_TOKEN}"
   url: "${RELEASE_URL}"
 
 runner:
   activeProfiles: "k8s,json-logging"
-
-persistence:
-  db:
-    size: "${RUNNER_DB_VOLUME_REQUESTS_STORAGE}"
-    accessModes:
-      - "ReadWriteOnce"
-    volume:
-      size: "${RUNNER_DB_VOLUME_CAPACITY_STORAGE}"
 
 image:
   registry:

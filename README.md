@@ -3,7 +3,6 @@
 
 - Kubernetes 1.19+
 - Helm 3.2.0+
-- ReadWriteOnly volume for deployment
 
 ## Installing the Chart
 
@@ -24,10 +23,6 @@ Create values file with correct release configuration:
 
 ```shell
 cat <<EOF > ./values-custom-aws.yaml
-global:
-  persistence:
-    storageClass: aws-efs
-
 release:
   url: "http://dai-xlr.ns1.svc.cluster.local"
   registrationToken: rpa_...
@@ -50,7 +45,7 @@ On finish of the last command you will see information about helm release.
 Follow k3d installation instructions on release-remote-runner wiki.\
 Be sure to create cluster using following command (replace the path to local directory):
 ```
-k3d cluster create xlrcluster --volume /sandbox-dir/kube-cluster-pv:/workspace --registry-create xlr-registry:5050
+k3d cluster create xlrcluster --registry-create xlr-registry:5050
 ```
 Publish your artefacts to local registry if you are using it for images.
 
@@ -63,25 +58,9 @@ Create values file with correct release configuration:
 
 ```shell
 cat <<EOF > ./values-custom-local.yaml
-global:
-  persistence:
-    createVolume: true
-    baseHostPath: /workspace
-    
 release:
   url: "http://host.k3d.internal:5516"
   registrationToken: rpa_64698aea344382bc954cea9158292a7a21c1f427
-
-persistence:
-  work:
-    accessModes:
-      - ReadWriteOnce
-    volume:
-      create: true
-      baseHostPath: /workspace
-  db:
-    volume:
-      create: true
 
 replicaCount: 2
 
@@ -113,7 +92,6 @@ On finish of the last command you will see information about helm release.
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
 helm template my-release . -n remote-runner --values ./values-cloud-connector.yaml > remote-runner.yaml
-helm template my-release . -n remote-runner --values ./values-cloud-connector.yaml --set persistence.work.volume.create=true > remote-runner.yaml
 ```
 
 ## Uninstalling the Chart
@@ -133,14 +111,6 @@ kubectl delete namespace remote-runner
 
 ## Parameters
 
-### Global parameters
-
-| Name                              | Description                                                        | Value   |
-| --------------------------------- | ------------------------------------------------------------------ | ------- |
-| `global.persistence.storageClass` | PVC Storage Class for Remote Runner data volume                    | `""`    |
-| `global.persistence.createVolume` | Provide for created claims explicit volume creation withing chart. | `false` |
-| `global.persistence.baseHostPath` | The host path for the k3d cluster.                                 | `nil`   |
-
 ### Digital.ai Remote Runner parameters
 
 | Name                        | Description                                                                        | Value                                                                                                     |
@@ -157,21 +127,6 @@ kubectl delete namespace remote-runner
 | --------------------------- | ------------------------------------------------------------------------------- | ----- |
 | `release.registrationToken` | is the token you create in Release that the runner will use to register itself. | `nil` |
 | `release.url`               | is the url of your release instance.                                            | `nil` |
-
-### Persistence parameters
-
-| Name                                   | Description                                                        | Value               |
-| -------------------------------------- | ------------------------------------------------------------------ | ------------------- |
-| `persistence.enabled`                  | Enable Remote Runner data persistence using PVC                    | `true`              |
-| `persistence.db.storageClass`          | PVC Storage Class for Remote Runner data volume                    | `""`                |
-| `persistence.db.selector`              | Selector to match an existing Persistent Volume                    | `{}`                |
-| `persistence.db.accessModes`           | PVC Access Modes for Remote Runner data volume                     | `["ReadWriteOnce"]` |
-| `persistence.db.existingClaim`         | Provide an existing PersistentVolumeClaims                         | `""`                |
-| `persistence.db.size`                  | PVC Storage Request for DB storage                                 | `256Mi`             |
-| `persistence.db.volume.create`         | Provide for created claims explicit volume creation withing chart. | `false`             |
-| `persistence.db.volume.baseHostPath`   | The host path for the k3d cluster.                                 | `nil`               |
-| `persistence.db.volume.size`           | PV Storage Capacity for DB storage                                 | `1Gi`               |
-| `persistence.db.annotations`           | Persistence annotations. Evaluated as a template                   | `{}`                |
 
 ### Image parameters
 
