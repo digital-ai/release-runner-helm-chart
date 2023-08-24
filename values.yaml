@@ -1,24 +1,6 @@
 ## @section Global parameters
 ##
 
-global:
-  persistence:
-    ## @param global.persistence.storageClass PVC Storage Class for Remote Runner data volume
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    storageClass: ""
-    ## @param global.persistence.createVolume Provide for created claims explicit volume creation withing chart.
-    ## If set to "true", baseHostPath needs to be set too.
-    createVolume: false
-    ## @param global.persistence.baseHostPath The host path for the k3d cluster.
-    ## It is not required if you are installing remote runner in the cloud (AWS, Azure or GCP).
-    ## If set, creating the PV with specified hostPath.
-    baseHostPath:
-
 ## @section Digital.ai Release Remote Runner parameters
 ##
 
@@ -43,59 +25,6 @@ release:
   registrationToken:
   ## @param release.url is the url of your release instance.
   url:
-
-## @section Persistence parameters
-##
-
-persistence:
-  ## @param persistence.enabled Enable Remote Runner data persistence using PVC
-  ##
-  enabled: true
-  db:
-    ## @param persistence.db.storageClass PVC Storage Class for Remote Runner data volume
-    ## If defined, storageClassName: <storageClass>
-    ## If set to "-", storageClassName: "", which disables dynamic provisioning
-    ## If undefined (the default) or set to null, no storageClassName spec is
-    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
-    ##   GKE, AWS & OpenStack)
-    ##
-    storageClass: ""
-    ## @param persistence.db.selector Selector to match an existing Persistent Volume
-    ## selector:
-    ##   matchLabels:
-    ##     app: my-app
-    ##
-    selector: { }
-    ## @param persistence.db.accessModes PVC Access Modes for Remote Runner data volume
-    ##
-    accessModes:
-      - ReadWriteOnce
-    ## @param persistence.db.existingClaim Provide an existing PersistentVolumeClaims
-    ## The value is evaluated as a template
-    ## So, for example, the name can depend on .Release or .Chart
-    ##
-    existingClaim: ""
-    ## @param persistence.db.size PVC Storage Request for DB storage
-    ##
-    size: 256Mi
-    volume:
-      ## @param persistence.db.volume.create Provide for created claims explicit volume creation withing chart.
-      ## If set to "true", baseHostPath needs to be set too.
-      ##
-      create: false
-      ## @param persistence.db.volume.baseHostPath The host path for the k3d cluster.
-      ## It is not required if you are installing remote runner in the cloud (AWS, Azure or GCP).
-      ## If set, creating the PV with specified hostPath.
-      baseHostPath:
-      ## @param persistence.db.volume.size PV Storage Capacity for DB storage
-      size: 1Gi
-    ## @param persistence.db.annotations [object] Persistence annotations. Evaluated as a template
-    ## Example:
-    ## annotations:
-    ##   example.io/disk-volume-type: SSD
-    ##
-    annotations:
-      helm.sh/resource-policy: "keep"
 
 ## @section Image parameters
 ##

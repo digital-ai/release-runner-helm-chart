@@ -107,25 +107,6 @@ spec:
         - name: {{ . }}
         {{- end }}
       {{- end }}
-      {{- if or .Values.global.persistence.createVolume .Values.persistence.db.volume.create }}
-      initContainers:
-        - name: set-volume-permissions
-          image: {{ include "images.image" (dict "imageRoot" .Values.image) }}
-          command:
-            - sh
-            - -c
-            {{- if .Values.persistence.db.volume.create }}
-            - chmod -R 777 /workspace/db
-            {{- end }}
-          imagePullPolicy: IfNotPresent
-          volumeMounts:
-            - mountPath: /workspace/db
-              name: job-runner-db
-              readOnly: false
-          securityContext:
-              privileged: true
-              runAsUser: 0
-      {{- end }}
       containers:
         - name: remote-runner
           image: {{ include "images.image" (dict "imageRoot" .Values.image) }}
@@ -216,9 +197,6 @@ spec:
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
           volumeMounts:
-            - mountPath: /workspace/db
-              name: job-runner-db
-              readOnly: false
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
               name: release-remote-runner-truststore
@@ -237,35 +215,3 @@ spec:
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $)  | nindent 8 }}
         {{- end }}
-        {{- if not .Values.persistence.enabled }}
-        - name: job-runner-db
-          emptyDir: { }
-        {{- else if .Values.persistence.db.existingClaim }}
-        - name: job-runner-db
-          persistentVolumeClaim:
-            {{- with .Values.persistence.db.existingClaim }}
-            claimName: {{ tpl . $ }}
-            {{- end }}
-        {{- end }}
-  volumeClaimTemplates:
-  {{- if and .Values.persistence.enabled (not .Values.persistence.db.existingClaim) }}
-  - metadata:
-      name: job-runner-db
-      labels: {{- include "common.labels.matchLabels" . | nindent 10 }}
-      {{- if .Values.persistence.db.annotations }}
-      annotations:
-        {{- include "common.tplvalues.render" ( dict "value" .Values.persistence.db.annotations "context" $) | nindent 10 }}
-      {{- end }}
-    spec:
-      {{ include "common.storage.class" (dict "persistence" .Values.persistence.db "global" .Values.global.persistence) }}
-      accessModes:
-          {{- range .Values.persistence.db.accessModes }}
-        - {{ . | quote }}
-          {{- end }}
-      resources:
-        requests:
-          storage: {{ .Values.persistence.db.size }}
-      {{- if .Values.persistence.db.selector }}
-      selector: {{- include "common.tplvalues.render" (dict "value" .Values.persistence.db.selector "context" $) | nindent 10 }}
-      {{- end -}}
-  {{- end }}
