@@ -8,7 +8,7 @@ runner:
   ## @param runner.activeProfiles is used to change the active spring profile.
   activeProfiles: "k8s"
   ## @param runner.capabilities comma separated list of capabilities for the remote runner
-  capabilities: "remote,container,k8s"
+  capabilities: "remote,remote-script,container,k8s"
   ## @param runner.truststore the truststore base64 encoded value
   truststore:
   ## @param runner.truststorePassword the truststore password
