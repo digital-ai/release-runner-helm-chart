@@ -30,6 +30,6 @@ jobs:
           echo "chart_version=$CHART_VERSION" >> $GITHUB_ENV
       - name: Helm Publish (Nexus)
         run: |
-          curl -k -u ${{ secrets.DAI_AGENT_CONTRIB_USER }}:${{ secrets.DAI_AGENT_CONTRIB_PASSWORD }} \
+          curl -k -u ${{ secrets.DAI_NEXUS_K6I_USER }}:${{ secrets.DAI_NEXUS_K6I_PASSWORD }} \
           https://nexus.usw2mgt.dev.digitalai.cloud/repository/helm-development/ \
           --upload-file build/remote-runner-${{ env.chart_version }}.tgz -v
