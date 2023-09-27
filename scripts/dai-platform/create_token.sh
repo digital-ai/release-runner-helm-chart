@@ -42,9 +42,8 @@ fi
 # Create the bearer token to use in API requests
 curl --silent --request POST "${URL}/auth/realms/digitalai/protocol/openid-connect/token" \
   --header 'Content-Type: application/x-www-form-urlencoded' \
-  --data-urlencode 'client_id=dai-svc-consumer' \
-  --data-urlencode 'grant_type=password' \
-  --data-urlencode "password=${PLATFORM_PW}" \
-  --data-urlencode "username=${PLATFORM_USER}" \
+  --data-urlencode 'grant_type=client_credentials' \
+  --data-urlencode "client_secret=${PLATFORM_PW}" \
+  --data-urlencode "client_id=${PLATFORM_USER}" \
   --data-urlencode 'scope=openid dai-svc' \
   | jq -r .access_token

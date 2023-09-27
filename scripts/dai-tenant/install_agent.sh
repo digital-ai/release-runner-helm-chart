@@ -146,10 +146,9 @@ fi
 if [ -z ${TENANT_TOKEN} ]; then
   TENANT_TOKEN=$(curl --silent --request POST "${IDENTITY_URL}/auth/realms/${VANITY_DOMAIN}/protocol/openid-connect/token" \
     --header 'Content-Type: application/x-www-form-urlencoded' \
-    --data-urlencode 'client_id=dai-svc-consumer' \
-    --data-urlencode 'grant_type=password' \
-    --data-urlencode "password=${TENANT_PW}" \
-    --data-urlencode "username=${TENANT_USER}" \
+    --data-urlencode 'grant_type=client_credentials' \
+    --data-urlencode "client_secret=${TENANT_PW}" \
+    --data-urlencode "client_id=${TENANT_USER}" \
     --data-urlencode 'scope=openid dai-svc' \
     | jq -r .access_token)
 fi
