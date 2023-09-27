@@ -17,7 +17,6 @@ API_URL="https://api.staging.digital.ai"
 # For values used in the "variables" property of the agent instance use exact same name as the variable the API needs
 ####
 #RUNNER_REGISTRATION_TOKEN=""                         # api token from release used register remote-runner
-#RUNNER_VOLUME_BASE_HOST_PATH="/.dai-agent-storage"   # where volume is mounted in the
 
 # Parse arguments to script
 while [[ $# -gt 0 ]]; do
@@ -70,11 +69,6 @@ while [[ $# -gt 0 ]]; do
       ;;
     --releaseToken) # token for registering remote-runner with
       RUNNER_REGISTRATION_TOKEN="$2"
-      shift # past argument
-      shift # past value
-      ;;
-    --volumeHostPath) # path on the host where
-      RUNNER_VOLUME_BASE_HOST_PATH="$2"
       shift # past argument
       shift # past value
       ;;
