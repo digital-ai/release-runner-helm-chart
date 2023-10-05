@@ -1,0 +1,33 @@
+name: Publish Agent Runtime Definition
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out current repository
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+      - name: Helm Installation
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.7.0
+      - name: Install packages
+        run: |
+          sudo snap install yq
+      - name: Publish agent in staging
+        run: |
+          BEARER_TOKEN=$(
+            bash ${GITHUB_WORKSPACE}/scripts/dai-platform/create_token.sh \
+              --user "${{ secrets.STAGING_PLATFORM_USER }}" \
+              --pw "${{ secrets.STAGING_PLATFORM_PW }}"
+          )
+
+          bash ${GITHUB_WORKSPACE}/scripts/dai-platform/publish_agent_runtime.sh \
+            --token "${BEARER_TOKEN}" \
+            --version "${{ github.event.inputs.version }}" \
+            --workspace "${GITHUB_WORKSPACE}"
