@@ -1,6 +1,5 @@
 #!/bin/bash
 
-IDENTITY_URL="https://identity.staging.digital.ai"
 API_URL="https://api.staging.digital.ai"
 
 ####
@@ -144,7 +143,10 @@ fi
 
 # Create the token if necessary
 if [ -z ${TENANT_TOKEN} ]; then
-  TENANT_TOKEN=$(curl --silent --request POST "${IDENTITY_URL}/auth/realms/${VANITY_DOMAIN}/protocol/openid-connect/token" \
+  TOKEN_ENDPOINT=$(curl --silent "${API_URL}/identity/v1/accounts/${VANITY_DOMAIN}/.well-known/openid-configuration" \
+    | jq -r .token_endpoint)
+
+  TENANT_TOKEN=$(curl --silent --request POST "${TOKEN_ENDPOINT}" \
     --header 'Content-Type: application/x-www-form-urlencoded' \
     --data-urlencode 'grant_type=client_credentials' \
     --data-urlencode "client_secret=${TENANT_PW}" \
