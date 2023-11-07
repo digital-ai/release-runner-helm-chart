@@ -11,6 +11,9 @@ metadata:
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
 data:
+  {{- if (empty .Values.runner.config) }}
+  {}
+  {{- end }}
   {{- range $k,$v := .Values.runner.config }}
   {{ $k }}: {{ $v }}
   {{- end }}
