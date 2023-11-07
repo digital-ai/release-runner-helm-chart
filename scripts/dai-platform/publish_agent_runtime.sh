@@ -52,6 +52,8 @@ HELM_DIR="${WORKSPACE_ROOT}"
 GENERATED_YAML_FILE="${WORKSPACE_ROOT}/cloud-connector-k8s.yaml"
 
 # Generate the yaml file for cloud-connector
+helm repo add bitnami-repo https://charts.bitnami.com/bitnami
+helm dependency update .
 helm template remote-runner ${HELM_DIR} -f ${HELM_DIR}/values-cloud-connector.yaml > ${GENERATED_YAML_FILE}
 
 if [ -z ${GENERATED_YAML_FILE} ]; then
