@@ -12,7 +12,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --version)
       IMAGE_VERSION="$2"
-      IMAGE_NAME="remote-runner-${IMAGE_VERSION}"
+      IMAGE_NAME="runner-${IMAGE_VERSION}"
       shift # past argument
       shift # past value
       ;;
@@ -32,7 +32,7 @@ if [ -z ${BEARER_TOKEN} ]; then
   MISSING_REQUIRED=true
 fi
 if [ -z ${IMAGE_VERSION} ]; then
-  echo "Use --version to define the version of the image of remote-runner search for"
+  echo "Use --version to define the version of the image of Digital.ai Release Runner search for"
   MISSING_REQUIRED=true
 fi
 

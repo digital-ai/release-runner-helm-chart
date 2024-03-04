@@ -26,10 +26,10 @@ jobs:
           HELM_EXPERIMENTAL_OCI: 1
           XEBIALABS_DOCKER_HUB_USER: ${{ secrets.XEBIALABS_DOCKER_HUB_USER }}
           XEBIALABS_DOCKER_HUB_PASSWORD: ${{ secrets.XEBIALABS_DOCKER_HUB_PASSWORD }}
-          DH_IMAGE: registry-1.docker.io/xldevdocker/release-remote-runner-helm-chart
+          DH_IMAGE: registry-1.docker.io/xldevdocker/release-runner-helm-chart
         run: |
           CHART_VERSION=$(helm show chart . | grep "^version:" | awk '$1 { print $2 }')
-          CHART_PACKAGE_NAME="remote-runner-$CHART_VERSION"
+          CHART_PACKAGE_NAME="runner-$CHART_VERSION"
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
           helm dependency update

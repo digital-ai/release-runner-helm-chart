@@ -1,4 +1,4 @@
-# Release Remote Runner Helm Chart
+# Digital.ai Release Runner Helm Chart
 ## Prerequisites
 
 - Kubernetes 1.19+
@@ -6,12 +6,12 @@
 
 ## Installing the Chart
 
-To install the chart with the release name `one-remote-runner`:
+To install the chart with the release name `one-runner`:
 
 ```console
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
-helm install one-remote-runner .  -n remote-runner --values values-custom-example.yaml
+helm install one-runner .  -n runner --values values-custom-example.yaml
 ```
 
 ### Minimal configuration for the AWS cluster
@@ -31,18 +31,18 @@ replicaCount: 2
 EOF
 ```
 
-Run helm release `one-remote-runner` installation with creation of the namespace:
+Run helm release `one-runner` installation with creation of the namespace:
 ```shell
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
-helm install one-remote-runner . -n remote-runner --create-namespace --values ./values-custom-aws.yaml
+helm install one-runner . -n runner --create-namespace --values ./values-custom-aws.yaml
 ```
 
 On finish of the last command you will see information about helm release.
 
 ### Minimal configuration for the k3d cluster
 
-Follow k3d installation instructions on release-remote-runner wiki.\
+Follow k3d installation instructions on release-runner wiki.\
 Be sure to create cluster using following command (replace the path to local directory):
 ```
 k3d cluster create xlrcluster --registry-create xlr-registry:5050
@@ -72,16 +72,16 @@ image:
   pullPolicy: Always
   registry: xlr-registry:5050
   repository: digitalai
-  name: release-remote-runner
+  name: release-runner
   tag: 0.2.0
 EOF
 ```
 
-Run helm release `one-remote-runner` installation with creation of the namespace:
+Run helm release `one-runner` installation with creation of the namespace:
 ```shell
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
-helm install one-remote-runner . -n remote-runner --create-namespace --values ./values-custom-local.yaml
+helm install one-runner . -n runner --create-namespace --values ./values-custom-local.yaml
 ```
 
 On finish of the last command you will see information about helm release.
@@ -91,7 +91,7 @@ On finish of the last command you will see information about helm release.
 ```shell
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
-helm template my-release . -n remote-runner --values ./values-cloud-connector.yaml > remote-runner.yaml
+helm template my-release . -n runner --values ./values-cloud-connector.yaml > runner.yaml
 ```
 
 ## Uninstalling the Chart
@@ -99,24 +99,24 @@ helm template my-release . -n remote-runner --values ./values-cloud-connector.ya
 To uninstall/delete the `my-release` deployment:
 
 ```shell
-helm uninstall my-release -n remote-runner
+helm uninstall my-release -n runner
 ```
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 Uninstalling the chart will not remove the PVCs, you need to delete them manually.
 
-To delete all resources with one command (if in the namespace is only remote-runner installed) you can delete namespace with:
+To delete all resources with one command (if in the namespace is only runner installed) you can delete namespace with:
 ```shell
-kubectl delete namespace remote-runner
+kubectl delete namespace runner
 ```
 
 ## Parameters
 
-### Digital.ai Remote Runner parameters
+### Digital.ai Release Runner parameters
 
 | Name                        | Description                                                                        | Value                                                                                                     |
 | --------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `runner.activeProfiles`     | is used to change the active spring profile.                                       | `k8s`                                                                                                     |
-| `runner.capabilities`       | comma separated list of capabilities for the remote runner                         | `remote,container,k8s`                                                                                    |
+| `runner.capabilities`       | comma separated list of capabilities for the Digital.ai Release Runner                         | `remote,container,k8s`                                                                                    |
 | `runner.truststore`         | the truststore base64 encoded value                                                | `nil`                                                                                                     |
 | `runner.truststorePassword` | the truststore password                                                            | `nil`                                                                                                     |
 | `runner.config`             | Map configuration variables that are set in the config map and used as environment | `{}`                                                                                                      |
@@ -130,14 +130,14 @@ kubectl delete namespace remote-runner
 
 ### Image parameters
 
-| Name                | Description                                                                                         | Value               |
-| ------------------- | --------------------------------------------------------------------------------------------------- | ------------------- |
-| `image.pullPolicy`  | Specify a imagePullPolicy                                                                           | `IfNotPresent`      |
-| `image.registry`    | Remote runner image registry                                                                        | `docker.io`         |
-| `image.repository`  | runner image repository                                                                             | `xebialabs`         |
-| `image.name`        | Remote runner image name                                                                            | `xlr-remote-runner` |
-| `image.tag`         | Remote runner image tag                                                                             | `0.1.33`            |
-| `image.pullSecrets` | Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace) | `[]`                |
+| Name                | Description                                                                                         | Value                   |
+| ------------------- | --------------------------------------------------------------------------------------------------- |-------------------------|
+| `image.pullPolicy`  | Specify a imagePullPolicy                                                                           | `IfNotPresent`          |
+| `image.registry`    | Digital.ai Release Runner image registry                                                                        | `docker.io`             |
+| `image.repository`  | runner image repository                                                                             | `xebialabs`             |
+| `image.name`        | Digital.ai Release Runner image name                                                                            | `release-runner` |
+| `image.tag`         | Digital.ai Release Runner image tag                                                                             | `0.1.33`                |
+| `image.pullSecrets` | Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace) | `[]`                    |
 
 ### Common parameters
 
@@ -160,12 +160,12 @@ kubectl delete namespace remote-runner
 | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | `schedulerName`                         | Use an alternate scheduler, e.g. "stork".                                                                                                | `""`            |
 | `podManagementPolicy`                   | Pod management policy                                                                                                                    | `Parallel`      |
-| `podLabels`                             | Remote Runner Pod labels. Evaluated as a template                                                                                        | `{}`            |
-| `podAnnotations`                        | Remote Runner Pod annotations. Evaluated as a template                                                                                   | `{}`            |
-| `replicaCount`                          | Number of Remote Runner replicas to deploy                                                                                               | `1`             |
-| `updateStrategy.type`                   | Update strategy type for Remote Runner statefulset                                                                                       | `RollingUpdate` |
-| `statefulsetLabels`                     | Remote Runner statefulset labels. Evaluated as a template                                                                                | `{}`            |
-| `priorityClassName`                     | Name of the priority class to be used by Remote Runner pods, priority class needs to be created beforehand                               | `""`            |
+| `podLabels`                             | Digital.ai Release Runner Pod labels. Evaluated as a template                                                                                        | `{}`            |
+| `podAnnotations`                        | Digital.ai Release Runner Pod annotations. Evaluated as a template                                                                                   | `{}`            |
+| `replicaCount`                          | Number of Digital.ai Release Runner replicas to deploy                                                                                               | `1`             |
+| `updateStrategy.type`                   | Update strategy type for Digital.ai Release Runner statefulset                                                                                       | `RollingUpdate` |
+| `statefulsetLabels`                     | Digital.ai Release Runner statefulset labels. Evaluated as a template                                                                                | `{}`            |
+| `priorityClassName`                     | Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand                               | `""`            |
 | `podAffinityPreset`                     | Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                      | `""`            |
 | `podAntiAffinityPreset`                 | Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                 | `soft`          |
 | `nodeAffinityPreset.type`               | Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                | `""`            |
@@ -175,13 +175,13 @@ kubectl delete namespace remote-runner
 | `nodeSelector`                          | Node labels for pod assignment. Evaluated as a template                                                                                  | `{}`            |
 | `tolerations`                           | Tolerations for pod assignment. Evaluated as a template                                                                                  | `[]`            |
 | `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template                 | `[]`            |
-| `podSecurityContext.enabled`            | Enable Remote Runner pods' Security Context                                                                                              | `false`         |
-| `podSecurityContext.runAsUser`          | Set Remote Runner pod's Security Context runAsUser                                                                                       | `1001`          |
-| `podSecurityContext.runAsGroup`         | Set Remote Runner pod's Security Context runAsGroup                                                                                      | `1001`          |
-| `podSecurityContext.fsGroup`            | Set Remote Runner pod's Security Context fsGroup                                                                                         | `1001`          |
-| `containerSecurityContext.enabled`      | Enabled Remote Runner containers' Security Context                                                                                       | `false`         |
-| `containerSecurityContext.runAsUser`    | Set Remote Runner containers' Security Context runAsUser                                                                                 | `1001`          |
-| `containerSecurityContext.runAsNonRoot` | Set Remote Runner container's Security Context runAsNonRoot                                                                              | `true`          |
+| `podSecurityContext.enabled`            | Enable Digital.ai Release Runner pods' Security Context                                                                                              | `false`         |
+| `podSecurityContext.runAsUser`          | Set Digital.ai Release Runner pod's Security Context runAsUser                                                                                       | `1001`          |
+| `podSecurityContext.runAsGroup`         | Set Digital.ai Release Runner pod's Security Context runAsGroup                                                                                      | `1001`          |
+| `podSecurityContext.fsGroup`            | Set Digital.ai Release Runner pod's Security Context fsGroup                                                                                         | `1001`          |
+| `containerSecurityContext.enabled`      | Enabled Digital.ai Release Runner containers' Security Context                                                                                       | `false`         |
+| `containerSecurityContext.runAsUser`    | Set Digital.ai Release Runner containers' Security Context runAsUser                                                                                 | `1001`          |
+| `containerSecurityContext.runAsNonRoot` | Set Digital.ai Release Runner container's Security Context runAsNonRoot                                                                              | `true`          |
 | `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts                                                                                 | `[]`            |
 | `extraVolumes`                          | Optionally specify extra list of additional volumes .                                                                                    | `[]`            |
 | `hostAliases`                           | Deployment pod host aliases                                                                                                              | `[]`            |
@@ -190,25 +190,25 @@ kubectl delete namespace remote-runner
 | `dnsConfig`                             | DNS Configuration pod                                                                                                                    | `{}`            |
 | `command`                               | Override default container command (useful when using custom images)                                                                     | `nil`           |
 | `args`                                  | Override default container args (useful when using custom images)                                                                        | `nil`           |
-| `lifecycleHooks`                        | Overwrite livecycle for the Remote Runner container(s) to automate configuration before or after startup                                 | `{}`            |
+| `lifecycleHooks`                        | Overwrite livecycle for the Digital.ai Release Runner container(s) to automate configuration before or after startup                                 | `{}`            |
 | `terminationGracePeriodSeconds`         | Default duration in seconds k8s waits for container to exit before sending kill signal.                                                  | `200`           |
-| `extraEnvVars`                          | Extra environment variables to add to Remote Runner pods                                                                                 | `[]`            |
+| `extraEnvVars`                          | Extra environment variables to add to Digital.ai Release Runner pods                                                                                 | `[]`            |
 | `extraEnvVarsCM`                        | Name of existing ConfigMap containing extra environment variables                                                                        | `""`            |
 | `extraEnvVarsSecret`                    | Name of existing Secret containing extra environment variables (in case of sensitive data)                                               | `""`            |
-| `health.enabled`                        | Enable health monitoring with readiness and liveness probes based on the remote runner actuator management endpoints                     | `true`          |
+| `health.enabled`                        | Enable health monitoring with readiness and liveness probes based on the Digital.ai Release Runner actuator management endpoints                     | `true`          |
 | `health.periodScans`                    | Defines how frequently the probe will be executed after the initial delay.                                                               | `5`             |
 | `health.probeFailureThreshold`          | Instructs Kubernetes to retry the probe this many times after a failure is first recorded.                                               | `12`            |
 | `health.probesLivenessTimeout`          | Set a delay between the time the container starts and the first time the probe is executed.                                              | `10`            |
 | `health.probesReadinessTimeout`         | Set a delay between the time the container starts and the first time the probe is executed.                                              | `10`            |
-| `resources.limits`                      | The resources limits for Remote Runner containers                                                                                        | `{}`            |
-| `resources.requests`                    | The requested resources for Remote Runner containers                                                                                     | `{}`            |
+| `resources.limits`                      | The resources limits for Digital.ai Release Runner containers                                                                                        | `{}`            |
+| `resources.requests`                    | The requested resources for Digital.ai Release Runner containers                                                                                     | `{}`            |
 
 ### RBAC parameters
 
 | Name                         | Description                                                                                                                             | Value  |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| `serviceAccount.create`      | Enable creation of ServiceAccount for Remote Runner pods                                                                                | `true` |
+| `serviceAccount.create`      | Enable creation of ServiceAccount for Digital.ai Release Runner pods                                                                                | `true` |
 | `serviceAccount.name`        | Name of the created serviceAccount                                                                                                      | `""`   |
 | `serviceAccount.annotations` | Annotations for service account. Evaluated as a template. Only used if `create` is `true`.                                              | `{}`   |
-| `rbac.create`                | Whether RBAC rules should be created binding Remote Runner ServiceAccount to a role that allows Remote Runner pods querying the K8s API | `true` |
+| `rbac.create`                | Whether RBAC rules should be created binding Digital.ai Release Runner ServiceAccount to a role that allows Digital.ai Release Runner pods querying the K8s API | `true` |
 

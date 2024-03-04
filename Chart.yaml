@@ -1,6 +1,6 @@
 apiVersion: v2
-name: remote-runner
-description: A Helm chart for remote-runner
+name: runner
+description: A Helm chart for Digital.ai Release Runner
 type: application
 
 # This is the chart version. This version number should be incremented each time you make changes

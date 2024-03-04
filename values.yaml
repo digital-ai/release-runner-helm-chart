@@ -1,13 +1,13 @@
 ## @section Global parameters
 ##
 
-## @section Digital.ai Release Remote Runner parameters
+## @section Digital.ai Release Runner parameters
 ##
 
 runner:
   ## @param runner.activeProfiles is used to change the active spring profile.
   activeProfiles: "k8s"
-  ## @param runner.capabilities comma separated list of capabilities for the remote runner
+  ## @param runner.capabilities comma separated list of capabilities for the Digital.ai Release Runner
   capabilities: "remote,remote-script,container,k8s"
   ## @param runner.truststore the truststore base64 encoded value
   truststore:
@@ -35,13 +35,13 @@ image:
   ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
   ##
   pullPolicy: IfNotPresent
-  ## @param image.registry Remote runner image registry
+  ## @param image.registry Digital.ai Release Runner image registry
   registry: docker.io
   ## @param image.repository runner image repository
   repository: xebialabs
-  ## @param image.name Remote runner image name
-  name: release-remote-runner
-  ## @param image.tag Remote runner image tag
+  ## @param image.name Digital.ai Release Runner image name
+  name: release-runner
+  ## @param image.tag Digital.ai Release Runner image tag
   tag: 0.1.0
   ## @param image.pullSecrets Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace)
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -103,23 +103,23 @@ diagnosticMode:
 ## ref: https://kubernetes.io/docs/tasks/administer-cluster/configure-multiple-schedulers/
 ##
 schedulerName: ""
-## Remote Runner can be initialized in parallel when building cluster.
+## Digital.ai Release Runner can be initialized in parallel when building cluster.
 ## Therefore, the default value of podManagementPolicy is 'OrderedReady'
 ## @param podManagementPolicy Pod management policy
 ##
 podManagementPolicy: Parallel
-## @param podLabels Remote Runner Pod labels. Evaluated as a template
+## @param podLabels Digital.ai Release Runner Pod labels. Evaluated as a template
 ## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 podLabels: {}
-## @param podAnnotations Remote Runner Pod annotations. Evaluated as a template
+## @param podAnnotations Digital.ai Release Runner Pod annotations. Evaluated as a template
 ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 ##
 podAnnotations: {}
-## @param replicaCount Number of Remote Runner replicas to deploy
+## @param replicaCount Number of Digital.ai Release Runner replicas to deploy
 ##
 replicaCount: 1
-## @param updateStrategy.type Update strategy type for Remote Runner statefulset
+## @param updateStrategy.type Update strategy type for Digital.ai Release Runner statefulset
 ## ref: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies
 ##
 updateStrategy:
@@ -127,11 +127,11 @@ updateStrategy:
   ## Can be set to RollingUpdate or OnDelete
   ##
   type: RollingUpdate
-## @param statefulsetLabels Remote Runner statefulset labels. Evaluated as a template
+## @param statefulsetLabels Digital.ai Release Runner statefulset labels. Evaluated as a template
 ## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
 statefulsetLabels: {}
-## @param priorityClassName Name of the priority class to be used by Remote Runner pods, priority class needs to be created beforehand
+## @param priorityClassName Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand
 ## Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##
 priorityClassName: ""
@@ -181,12 +181,12 @@ tolerations: [ ]
 ##
 topologySpreadConstraints: [ ]
 
-## Remote Runner pods' Security Context
+## Digital.ai Release Runner pods' Security Context
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod
-## @param podSecurityContext.enabled Enable Remote Runner pods' Security Context
-## @param podSecurityContext.runAsUser Set Remote Runner pod's Security Context runAsUser
-## @param podSecurityContext.runAsGroup Set Remote Runner pod's Security Context runAsGroup
-## @param podSecurityContext.fsGroup Set Remote Runner pod's Security Context fsGroup
+## @param podSecurityContext.enabled Enable Digital.ai Release Runner pods' Security Context
+## @param podSecurityContext.runAsUser Set Digital.ai Release Runner pod's Security Context runAsUser
+## @param podSecurityContext.runAsGroup Set Digital.ai Release Runner pod's Security Context runAsGroup
+## @param podSecurityContext.fsGroup Set Digital.ai Release Runner pod's Security Context fsGroup
 ##
 podSecurityContext:
   enabled: false
@@ -194,9 +194,9 @@ podSecurityContext:
   runAsGroup: 1001
   fsGroup: 1001
 
-## @param containerSecurityContext.enabled Enabled Remote Runner containers' Security Context
-## @param containerSecurityContext.runAsUser Set Remote Runner containers' Security Context runAsUser
-## @param containerSecurityContext.runAsNonRoot Set Remote Runner container's Security Context runAsNonRoot
+## @param containerSecurityContext.enabled Enabled Digital.ai Release Runner containers' Security Context
+## @param containerSecurityContext.runAsUser Set Digital.ai Release Runner containers' Security Context runAsUser
+## @param containerSecurityContext.runAsNonRoot Set Digital.ai Release Runner container's Security Context runAsNonRoot
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
 ## Example:
 ##   containerSecurityContext:
@@ -252,14 +252,14 @@ command:
 ## @param args Override default container args (useful when using custom images)
 ##
 args:
-## @param lifecycleHooks Overwrite livecycle for the Remote Runner container(s) to automate configuration before or after startup
+## @param lifecycleHooks Overwrite livecycle for the Digital.ai Release Runner container(s) to automate configuration before or after startup
 ##
 lifecycleHooks: {}
 ## @param terminationGracePeriodSeconds Default duration in seconds k8s waits for container to exit before sending kill signal.
 ## Any time in excess of 10 seconds will be spent waiting for any synchronization necessary for cluster not to lose data.
 ##
 terminationGracePeriodSeconds: 200
-## @param extraEnvVars Extra environment variables to add to Remote Runner pods
+## @param extraEnvVars Extra environment variables to add to Digital.ai Release Runner pods
 ## E.g:
 ## extraEnvVars:
 ##   - name: FOO
@@ -274,7 +274,7 @@ extraEnvVarsCM: ""
 extraEnvVarsSecret: ""
 
 health:
-  ## @param health.enabled Enable health monitoring with readiness and liveness probes based on the remote runner actuator management endpoints
+  ## @param health.enabled Enable health monitoring with readiness and liveness probes based on the Digital.ai Release Runner actuator management endpoints
   enabled: true
   ## @param health.periodScans Defines how frequently the probe will be executed after the initial delay.
   periodScans: 5
@@ -285,7 +285,7 @@ health:
   ## @param health.probesReadinessTimeout Set a delay between the time the container starts and the first time the probe is executed.
   probesReadinessTimeout: 10
 
-## Remote Runner containers' resource requests and limits
+## Digital.ai Release Runner containers' resource requests and limits
 ## ref: https://kubernetes.io/docs/user-guide/compute-resources/
 ## We usually recommend not to specify default resources and to leave this as a conscious
 ## choice for the user. This also increases chances charts run on environments with little
@@ -293,7 +293,7 @@ health:
 ## lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 ##
 resources:
-  ## @param resources.limits [object] The resources limits for Remote Runner containers
+  ## @param resources.limits [object] The resources limits for Digital.ai Release Runner containers
   ## Example:
   ## limits:
   ##    cpu: 2
@@ -302,7 +302,7 @@ resources:
   limits:
     cpu: "4"
     memory: 1G
-  ## @param resources.requests [object] The requested resources for Remote Runner containers
+  ## @param resources.requests [object] The requested resources for Digital.ai Release Runner containers
   ## Examples:
   ## requests:
   ##    cpu: 100m
@@ -316,11 +316,11 @@ resources:
 ## @section RBAC parameters
 ##
 
-## Remote Runner pods ServiceAccount
+## Digital.ai Release Runner pods ServiceAccount
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
 ##
 serviceAccount:
-  ## @param serviceAccount.create Enable creation of ServiceAccount for Remote Runner pods
+  ## @param serviceAccount.create Enable creation of ServiceAccount for Digital.ai Release Runner pods
   ##
   create: true
   ## @param serviceAccount.name Name of the created serviceAccount
@@ -334,6 +334,6 @@ serviceAccount:
 ## ref: https://kubernetes.io/docs/admin/authorization/rbac/
 ##
 rbac:
-  ## @param rbac.create Whether RBAC rules should be created binding Remote Runner ServiceAccount to a role that allows Remote Runner pods querying the K8s API
+  ## @param rbac.create Whether RBAC rules should be created binding Digital.ai Release Runner ServiceAccount to a role that allows Digital.ai Release Runner pods querying the K8s API
   ##
   create: true

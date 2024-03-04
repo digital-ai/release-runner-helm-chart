@@ -37,7 +37,7 @@ if [ -z ${BEARER_TOKEN} ]; then
   MISSING_REQUIRED=true
 fi
 if [ -z ${IMAGE_VERSION} ]; then
-  echo "Use --version to define the version of the image of remote-runner to use in the agent runtime"
+  echo "Use --version to define the version of the image of Digital.ai Release Runner to use in the agent runtime"
   MISSING_REQUIRED=true
 fi
 if [ ${MISSING_REQUIRED} ]; then
@@ -54,7 +54,7 @@ GENERATED_YAML_FILE="${WORKSPACE_ROOT}/cloud-connector-k8s.yaml"
 # Generate the yaml file for cloud-connector
 helm repo add bitnami-repo https://charts.bitnami.com/bitnami
 helm dependency update .
-helm template remote-runner ${HELM_DIR} -f ${HELM_DIR}/values-cloud-connector.yaml > ${GENERATED_YAML_FILE}
+helm template runner ${HELM_DIR} -f ${HELM_DIR}/values-cloud-connector.yaml > ${GENERATED_YAML_FILE}
 
 if [ -z ${GENERATED_YAML_FILE} ]; then
   echo "Failed to generate yaml file for k8s template in agent"
@@ -66,7 +66,7 @@ AGENT_VARIABLES=$(${WORKSPACE_ROOT}/scripts/dai-platform/get_cloud_connector_var
 
 # Build the JSON for the POST body to create the agent runtime image
 CREATE_AGENT_BODY=$(jq \
-  --arg name "remote-runner-${IMAGE_VERSION}" \
+  --arg name "runner-${IMAGE_VERSION}" \
   --arg version "${IMAGE_VERSION}" \
   --argjson variables "${AGENT_VARIABLES}" \
   '.name = $name | .images[0].latest_tag = $version | .variables = $variables' \

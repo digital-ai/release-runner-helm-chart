@@ -1,4 +1,4 @@
-# Default values for a k8s template for remote runner to use in cloud connector.
+# Default values for a k8s template for Digital.ai Release Runner to use in cloud connector.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -14,7 +14,7 @@ runner:
 image:
   registry:
   repository:
-  name: "${AGENT_IMAGE_release-remote-runner}"
+  name: "${AGENT_IMAGE_release-runner}"
   tag:
 
 namespaceOverride: "${DAI_NAMESPACE}"

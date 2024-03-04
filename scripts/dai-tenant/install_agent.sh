@@ -15,7 +15,7 @@ API_URL="https://api.staging.digital.ai"
 ####
 # For values used in the "variables" property of the agent instance use exact same name as the variable the API needs
 ####
-#RUNNER_REGISTRATION_TOKEN=""                         # api token from release used register remote-runner
+#RUNNER_REGISTRATION_TOKEN=""                         # api token from release used register runner
 
 # Parse arguments to script
 while [[ $# -gt 0 ]]; do
@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
-    --version) # Runtime search option #1: remote-runner version to search for matching agent runtimes
+    --version) # Runtime search option #1: Digital.ai Release Runner version to search for matching agent runtimes
       INPUT_VERSION="$2"
       shift # past argument
       shift # past value
@@ -66,7 +66,7 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       shift # past value
       ;;
-    --releaseToken) # token for registering remote-runner with
+    --releaseToken) # token for registering Digital.ai Release Runner with
       RUNNER_REGISTRATION_TOKEN="$2"
       shift # past argument
       shift # past value
@@ -104,7 +104,7 @@ if [ -z ${INPUT_RUNTIME_ID} ] && [ -z ${INPUT_RUNTIME_NAME} ] && [ -z ${INPUT_VE
     echo "Use one of the following options to select a agent runtime to create the agent from:"
     echo "    --runtimeId <id> : to search by id for the agent runtime"
     echo "    --runtimeName <name> : to search for agent runtimes matching the name"
-    echo "    --version <version> : to search for agent runtimes using a specific remote-runner image version"
+    echo "    --version <version> : to search for agent runtimes using a specific Digital.ai Release Runner image version"
     MISSING_REQUIRED=true
 else
   if [ ! -z ${INPUT_RUNTIME_ID} ]; then
@@ -183,7 +183,7 @@ if [ -z ${AGENT_RUNTIME_ID} ]; then
     fi
   else
     # Search by agent runtime image version
-    RUNTIME_IDS=( $(curl --silent --request GET "${API_URL}/workload/v1/agent_runtime_images?filter=name:release-remote-runner" \
+    RUNTIME_IDS=( $(curl --silent --request GET "${API_URL}/workload/v1/agent_runtime_images?filter=name:release-runner" \
       --header "Authorization: Bearer ${TENANT_TOKEN}" \
       | jq --arg tag "${SEARCH_VERSION}" \
         -r '.agent_runtime_images[] | select(.latest_tag == $tag) | .agent_runtime_id') )
