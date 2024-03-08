@@ -36,7 +36,7 @@ DEFAULT_YAML=${WORKSPACE_ROOT}/values.yaml
 
 # Variable names to ignore, these are built into cloud connector
 EXCLUDES=(
-  "AGENT_IMAGE_release-remote-runner"
+  "AGENT_IMAGE_release-runner"
   "DAI_NAMESPACE"
 )
 

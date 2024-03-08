@@ -114,7 +114,7 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: remote-runner
+        - name: runner
           image: {{ include "images.image" (dict "imageRoot" .Values.image) }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.containerSecurityContext.enabled }}
@@ -206,7 +206,7 @@ spec:
           volumeMounts:
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
-              name: release-remote-runner-truststore
+              name: release-runner-truststore
               subPath: truststore.p12
               readOnly: true
             {{- end }}
@@ -217,7 +217,7 @@ spec:
       {{- if or .Values.runner.truststore .Values.extraVolumeMounts }}
       volumes:
         {{- if .Values.runner.truststore }}
-        - name: release-remote-runner-truststore
+        - name: release-runner-truststore
           secret:
             secretName: {{ include "common.names.fullname" . }}-truststore
         {{- end}}

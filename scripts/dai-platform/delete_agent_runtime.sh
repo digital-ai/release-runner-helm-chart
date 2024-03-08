@@ -37,7 +37,7 @@ if [ -z ${BEARER_TOKEN} ]; then
   MISSING_REQUIRED=true
 fi
 if [ -z ${IMAGE_VERSION} ]; then
-  echo "Use --version to define the version of the image of remote-runner to use in the agent runtime"
+  echo "Use --version to define the version of the image of Digital.ai Release Runner to use in the agent runtime"
   MISSING_REQUIRED=true
 fi
 

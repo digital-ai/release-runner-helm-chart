@@ -24,7 +24,7 @@ jobs:
       - name: Setup Env
         run: |
           CHART_VERSION=$(helm show chart . | grep "^version:" | awk '$1 { print $2 }')
-          CHART_PACKAGE_NAME="release-remote-runner-$CHART_VERSION"
+          CHART_PACKAGE_NAME="release-runner-$CHART_VERSION"
           echo "CHART_VERSION=$CHART_VERSION" >> "$GITHUB_ENV"
           echo "CHART_PACKAGE_NAME=$CHART_PACKAGE_NAME" >> "$GITHUB_ENV"
       - name: Helm Package (GCR)
@@ -32,7 +32,7 @@ jobs:
           # experimental feature
           HELM_EXPERIMENTAL_OCI: 1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GCR_IMAGE: ghcr.io/${{ github.repository_owner }}/release-remote-runner-helm-chart
+          GCR_IMAGE: ghcr.io/${{ github.repository_owner }}/release-runner-helm-chart
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update

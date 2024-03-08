@@ -1,10 +1,10 @@
 {
   "name": "",
-  "description": "Remote runner image for cloud connector",
+  "description": "Digital.ai Release Runner image for cloud connector",
   "k8s_template": "",
   "images": [
     {
-      "name": "release-remote-runner",
+      "name": "release-runner",
       "description": "",
       "latest_tag": "",
       "default_tag": ""

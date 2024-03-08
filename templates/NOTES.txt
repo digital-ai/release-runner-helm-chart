@@ -1,9 +1,9 @@
-Release Remote runner is installed in the {{ include "names.namespace" . | quote }} namespace. It is connecting on the Release server {{ .Values.release.url }}.
+Digital.ai Release Runner is installed in the {{ include "names.namespace" . | quote }} namespace. It is connecting on the Release server {{ .Values.release.url }}.
 It has installation with:
 - {{ .Values.replicaCount}} replica(s)
 - capabilities: {{ .Values.runner.capabilities}}
 
-To check release remote runner logs run:
+To check Digital.ai Release Runner logs run:
 kubectl logs -n {{ include "names.namespace" . | quote }} sts/{{ include "common.names.fullname" . }}
 
 To restart STS run:
