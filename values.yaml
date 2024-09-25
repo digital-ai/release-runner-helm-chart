@@ -205,7 +205,6 @@ podSecurityContext:
 ##
 containerSecurityContext:
   enabled: true
-  runAsNonRoot: true
   allowPrivilegeEscalation: false
   readOnlyRootFilesystem: true
   capabilities:
