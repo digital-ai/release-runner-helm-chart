@@ -202,7 +202,7 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
-          {{- if or .Values.runner.truststore .Values.extraVolumeMounts }}
+          {{- if or .Values.runner.truststore .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
@@ -210,17 +210,26 @@ spec:
               subPath: truststore.p12
               readOnly: true
             {{- end }}
+            {{- range $path := .Values.emptyDirPaths }}
+            - name: empty-dir
+              mountPath: {{ $path }}
+              subPath: {{ regexFind "[^/]+$" $path }}
+            {{- end }}
             {{- if .Values.extraVolumeMounts }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}
           {{- end }}
-      {{- if or .Values.runner.truststore .Values.extraVolumeMounts }}
+      {{- if or .Values.runner.truststore .Values.extraVolumeMounts .Values.emptyDirPaths }}
       volumes:
         {{- if .Values.runner.truststore }}
         - name: release-runner-truststore
           secret:
             secretName: {{ include "common.names.fullname" . }}-truststore
         {{- end}}
+        {{- if .Values.emptyDirPaths }}
+        - name: empty-dir
+          emptyDir: {}
+        {{- end }}
         {{- if .Values.extraVolumes }}
         {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumes "context" $)  | nindent 8 }}
         {{- end }}
