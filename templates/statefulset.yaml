@@ -166,6 +166,8 @@ spec:
                   name: {{ include "common.names.fullname" . }}-truststore
                   key: password
             {{- end}}
+            - name: RELEASE_RUNNER_KUBERNETES_PASSED_SA_ANNOTATIONS
+              value: {{ .Values.runner.kubernetes.passedSaAnnotations }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
