@@ -15,6 +15,9 @@ runner:
   truststorePassword:
   ## @param runner.config [object] Map configuration variables that are set in the config map and used as environment
   config:
+  ## @param runner.kubernetes.passedSaAnnotations comma separated list of annotations to pass from the runner to the executor ServiceAccount
+  kubernetes:
+    passedSaAnnotations: ""
 
 
 ## @section Digital.ai Release parameters
