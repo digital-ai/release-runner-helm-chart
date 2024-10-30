@@ -166,6 +166,10 @@ spec:
                   name: {{ include "common.names.fullname" . }}-truststore
                   key: password
             {{- end}}
+            {{- if .Values.runner.restClientCA }}
+            - name: RELEASE_RUNNER_REST_CLIENT_CA
+              value: "/workspace/ca.pem"
+            {{- end}}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
@@ -202,12 +206,18 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
-          {{- if or .Values.runner.truststore .Values.extraVolumeMounts .Values.emptyDirPaths }}
+          {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
               name: release-runner-truststore
               subPath: truststore.p12
+              readOnly: true
+            {{- end }}
+            {{- if .Values.runner.restClientCA }}
+            - mountPath: /workspace/ca.pem
+              name: release-runner-rest-client-ca
+              subPath: ca.pem
               readOnly: true
             {{- end }}
             {{- range $path := .Values.emptyDirPaths }}
@@ -219,12 +229,17 @@ spec:
             {{- include "common.tplvalues.render" (dict "value" .Values.extraVolumeMounts "context" $) | nindent 12 }}
             {{- end }}
           {{- end }}
-      {{- if or .Values.runner.truststore .Values.extraVolumeMounts .Values.emptyDirPaths }}
+      {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
       volumes:
         {{- if .Values.runner.truststore }}
         - name: release-runner-truststore
           secret:
             secretName: {{ include "common.names.fullname" . }}-truststore
+        {{- end}}
+        {{- if .Values.runner.restClientCA }}
+        - name: release-runner-rest-client-ca
+          secret:
+            secretName: {{ include "common.names.fullname" . }}-rest-client-ca
         {{- end}}
         {{- if .Values.emptyDirPaths }}
         - name: empty-dir
