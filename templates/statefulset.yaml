@@ -208,7 +208,7 @@ spec:
           {{- if .Values.resources }}
           resources: {{- toYaml .Values.resources | nindent 12 }}
           {{- end }}
-          {{- if or .Values.runner.truststore .Values.extraVolumeMounts .Values.emptyDirPaths }}
+          {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
