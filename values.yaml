@@ -13,6 +13,8 @@ runner:
   truststore:
   ## @param runner.truststorePassword the truststore password
   truststorePassword:
+  ## @param runner.restClientCACert the rest client CA cert base64 encoded value
+  restClientCA:
   ## @param runner.config [object] Map configuration variables that are set in the config map and used as environment
   config:
 
