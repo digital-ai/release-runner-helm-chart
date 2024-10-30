@@ -114,11 +114,12 @@ kubectl delete namespace runner
 ### Digital.ai Release Runner parameters
 
 | Name                        | Description                                                                        | Value                                                                                                     |
-| --------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+|-----------------------------|------------------------------------------------------------------------------------| --------------------------------------------------------------------------------------------------------- |
 | `runner.activeProfiles`     | is used to change the active spring profile.                                       | `k8s`                                                                                                     |
-| `runner.capabilities`       | comma separated list of capabilities for the Digital.ai Release Runner                         | `remote,container,k8s`                                                                                    |
+| `runner.capabilities`       | comma separated list of capabilities for the Digital.ai Release Runner             | `remote,container,k8s`                                                                                    |
 | `runner.truststore`         | the truststore base64 encoded value                                                | `nil`                                                                                                     |
 | `runner.truststorePassword` | the truststore password                                                            | `nil`                                                                                                     |
+| `runner.restClientCa`       | the certificates base64 encoded value                                         | `nil`                                                                                                     |
 | `runner.config`             | Map configuration variables that are set in the config map and used as environment | `{}`                                                                                                      |
 
 ### Digital.ai Release parameters
