@@ -147,6 +147,8 @@ spec:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-registration-token
                   key: token
+            - name: RELEASE_RUNNER_KUBERNETES_REGISTRY_MAPPING_SECRET_NAME
+              value: {{ include "common.names.fullname" . }}-registry-mapping
             - name: RELEASE_RUNNER_CAPABILITIES
               value: {{ .Values.runner.capabilities }}
             - name: RELEASE_RUNNER_KUBERNETES_NAMESPACE
