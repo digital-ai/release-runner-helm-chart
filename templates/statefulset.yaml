@@ -32,6 +32,9 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
+    {{- if .Values.capabilitiesLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.capabilitiesLabels "context" $ ) | nindent 4 }}
+    {{- end }}
   {{- if .Values.commonAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
   {{- end }}
@@ -138,6 +141,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: RELEASE_RUNNER_LABELS
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels
             - name: RELEASE_RUNNER_KUBERNETES_SERVICE_NAME
               value: {{ $serviceName }}
             - name: RELEASE_RUNNER_RELEASE_URL

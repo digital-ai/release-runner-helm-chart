@@ -158,15 +158,16 @@ kubectl delete namespace runner
 ### Statefulset parameters
 
 | Name                                    | Description                                                                                                                              | Value           |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+|-----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------| --------------- |
 | `schedulerName`                         | Use an alternate scheduler, e.g. "stork".                                                                                                | `""`            |
 | `podManagementPolicy`                   | Pod management policy                                                                                                                    | `Parallel`      |
-| `podLabels`                             | Digital.ai Release Runner Pod labels. Evaluated as a template                                                                                        | `{}`            |
-| `podAnnotations`                        | Digital.ai Release Runner Pod annotations. Evaluated as a template                                                                                   | `{}`            |
-| `replicaCount`                          | Number of Digital.ai Release Runner replicas to deploy                                                                                               | `1`             |
-| `updateStrategy.type`                   | Update strategy type for Digital.ai Release Runner statefulset                                                                                       | `RollingUpdate` |
-| `statefulsetLabels`                     | Digital.ai Release Runner statefulset labels. Evaluated as a template                                                                                | `{}`            |
-| `priorityClassName`                     | Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand                               | `""`            |
+| `podLabels`                             | Digital.ai Release Runner Pod labels. Evaluated as a template                                                                            | `{}`            |
+| `podAnnotations`                        | Digital.ai Release Runner Pod annotations. Evaluated as a template                                                                       | `{}`            |
+| `replicaCount`                          | Number of Digital.ai Release Runner replicas to deploy                                                                                   | `1`             |
+| `updateStrategy.type`                   | Update strategy type for Digital.ai Release Runner statefulset                                                                           | `RollingUpdate` |
+| `statefulsetLabels`                     | Digital.ai Release Runner statefulset labels. Evaluated as a template                                                                    | `{}`            |
+| `statefulsetCapabilityLabels`         | Digital.ai Release Runner statefulset Capability Schema labels. They should be prefixed with `digital.ai/` Evaluated as a template        | `{}`            |
+| `priorityClassName`                     | Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand                   | `""`            |
 | `podAffinityPreset`                     | Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                      | `""`            |
 | `podAntiAffinityPreset`                 | Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                 | `soft`          |
 | `nodeAffinityPreset.type`               | Node affinity preset type. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                | `""`            |
@@ -176,13 +177,13 @@ kubectl delete namespace runner
 | `nodeSelector`                          | Node labels for pod assignment. Evaluated as a template                                                                                  | `{}`            |
 | `tolerations`                           | Tolerations for pod assignment. Evaluated as a template                                                                                  | `[]`            |
 | `topologySpreadConstraints`             | Topology Spread Constraints for pod assignment spread across your cluster among failure-domains. Evaluated as a template                 | `[]`            |
-| `podSecurityContext.enabled`            | Enable Digital.ai Release Runner pods' Security Context                                                                                              | `false`         |
-| `podSecurityContext.runAsUser`          | Set Digital.ai Release Runner pod's Security Context runAsUser                                                                                       | `1001`          |
-| `podSecurityContext.runAsGroup`         | Set Digital.ai Release Runner pod's Security Context runAsGroup                                                                                      | `1001`          |
-| `podSecurityContext.fsGroup`            | Set Digital.ai Release Runner pod's Security Context fsGroup                                                                                         | `1001`          |
-| `containerSecurityContext.enabled`      | Enabled Digital.ai Release Runner containers' Security Context                                                                                       | `false`         |
-| `containerSecurityContext.runAsUser`    | Set Digital.ai Release Runner containers' Security Context runAsUser                                                                                 | `1001`          |
-| `containerSecurityContext.runAsNonRoot` | Set Digital.ai Release Runner container's Security Context runAsNonRoot                                                                              | `true`          |
+| `podSecurityContext.enabled`            | Enable Digital.ai Release Runner pods' Security Context                                                                                  | `false`         |
+| `podSecurityContext.runAsUser`          | Set Digital.ai Release Runner pod's Security Context runAsUser                                                                           | `1001`          |
+| `podSecurityContext.runAsGroup`         | Set Digital.ai Release Runner pod's Security Context runAsGroup                                                                          | `1001`          |
+| `podSecurityContext.fsGroup`            | Set Digital.ai Release Runner pod's Security Context fsGroup                                                                             | `1001`          |
+| `containerSecurityContext.enabled`      | Enabled Digital.ai Release Runner containers' Security Context                                                                           | `false`         |
+| `containerSecurityContext.runAsUser`    | Set Digital.ai Release Runner containers' Security Context runAsUser                                                                     | `1001`          |
+| `containerSecurityContext.runAsNonRoot` | Set Digital.ai Release Runner container's Security Context runAsNonRoot                                                                  | `true`          |
 | `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts                                                                                 | `[]`            |
 | `extraVolumes`                          | Optionally specify extra list of additional volumes .                                                                                    | `[]`            |
 | `hostAliases`                           | Deployment pod host aliases                                                                                                              | `[]`            |
@@ -191,18 +192,18 @@ kubectl delete namespace runner
 | `dnsConfig`                             | DNS Configuration pod                                                                                                                    | `{}`            |
 | `command`                               | Override default container command (useful when using custom images)                                                                     | `nil`           |
 | `args`                                  | Override default container args (useful when using custom images)                                                                        | `nil`           |
-| `lifecycleHooks`                        | Overwrite livecycle for the Digital.ai Release Runner container(s) to automate configuration before or after startup                                 | `{}`            |
+| `lifecycleHooks`                        | Overwrite livecycle for the Digital.ai Release Runner container(s) to automate configuration before or after startup                     | `{}`            |
 | `terminationGracePeriodSeconds`         | Default duration in seconds k8s waits for container to exit before sending kill signal.                                                  | `200`           |
-| `extraEnvVars`                          | Extra environment variables to add to Digital.ai Release Runner pods                                                                                 | `[]`            |
+| `extraEnvVars`                          | Extra environment variables to add to Digital.ai Release Runner pods                                                                     | `[]`            |
 | `extraEnvVarsCM`                        | Name of existing ConfigMap containing extra environment variables                                                                        | `""`            |
 | `extraEnvVarsSecret`                    | Name of existing Secret containing extra environment variables (in case of sensitive data)                                               | `""`            |
-| `health.enabled`                        | Enable health monitoring with readiness and liveness probes based on the Digital.ai Release Runner actuator management endpoints                     | `true`          |
+| `health.enabled`                        | Enable health monitoring with readiness and liveness probes based on the Digital.ai Release Runner actuator management endpoints         | `true`          |
 | `health.periodScans`                    | Defines how frequently the probe will be executed after the initial delay.                                                               | `5`             |
 | `health.probeFailureThreshold`          | Instructs Kubernetes to retry the probe this many times after a failure is first recorded.                                               | `12`            |
 | `health.probesLivenessTimeout`          | Set a delay between the time the container starts and the first time the probe is executed.                                              | `10`            |
 | `health.probesReadinessTimeout`         | Set a delay between the time the container starts and the first time the probe is executed.                                              | `10`            |
-| `resources.limits`                      | The resources limits for Digital.ai Release Runner containers                                                                                        | `{}`            |
-| `resources.requests`                    | The requested resources for Digital.ai Release Runner containers                                                                                     | `{}`            |
+| `resources.limits`                      | The resources limits for Digital.ai Release Runner containers                                                                            | `{}`            |
+| `resources.requests`                    | The requested resources for Digital.ai Release Runner containers                                                                         | `{}`            |
 
 ### RBAC parameters
 
