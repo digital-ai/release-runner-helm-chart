@@ -6,8 +6,8 @@ metadata:
   name: {{ $serviceName }}
   namespace: {{ include "names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.statefulsetLabels }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
+    {{- if .Values.statefulsetAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetAnnotations "context" $) | nindent 4 }}
     {{- end }}
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
@@ -26,18 +26,19 @@ metadata:
   name: {{ include "common.names.fullname" . }}
   namespace: {{ include "names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.statefulsetLabels }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
-    {{- end }}
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
     {{- if .Values.capabilitiesLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.capabilitiesLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  {{- if .Values.commonAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-  {{- end }}
+  annotations:
+    {{- if .Values.commonAnnotations }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+    {{- end }}
+    {{- if .Values.statefulsetAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetAnnotations "context" $) | nindent 4 }}
+    {{- end }}
 spec:
   serviceName: {{ $serviceName }}
   podManagementPolicy: {{ .Values.podManagementPolicy }}
