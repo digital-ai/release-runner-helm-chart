@@ -139,7 +139,9 @@ statefulsetLabels: {}
 ## @param statefulsetCapabilityAnnotations Digital.ai Release Runner statefulset capabilities annotations (they are passed as default Capability Schema). Evaluated as a template
 ## Ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 ##
-statefulsetCapabilityAnnotations: {}
+statefulsetCapabilityAnnotations:
+  digital.ai/instance: release-runner
+  digital.ai/default-capabilities: remote,remote-script,container,k8s
 ## @param priorityClassName Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand
 ## Ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
 ##

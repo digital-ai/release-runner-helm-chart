@@ -6,8 +6,8 @@ metadata:
   name: {{ $serviceName }}
   namespace: {{ include "names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
-    {{- if .Values.statefulsetAnnotations }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetAnnotations "context" $) | nindent 4 }}
+    {{- if .Values.statefulsetLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
     {{- end }}
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
@@ -26,18 +26,18 @@ metadata:
   name: {{ include "common.names.fullname" . }}
   namespace: {{ include "names.namespace" . | quote }}
   labels: {{- include "common.labels.standard" . | nindent 4 }}
+    {{- if .Values.statefulsetLabels }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetLabels "context" $) | nindent 4 }}
+    {{- end }}
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
-    {{- end }}
-    {{- if .Values.capabilitiesLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.capabilitiesLabels "context" $ ) | nindent 4 }}
     {{- end }}
   annotations:
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
-    {{- if .Values.statefulsetAnnotations }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetAnnotations "context" $) | nindent 4 }}
+    {{- if .Values.statefulsetCapabilityAnnotations }}
+    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetCapabilityAnnotations "context" $) | nindent 4 }}
     {{- end }}
 spec:
   serviceName: {{ $serviceName }}
@@ -142,10 +142,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: RELEASE_RUNNER_LABELS
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.labels
             - name: RELEASE_RUNNER_KUBERNETES_SERVICE_NAME
               value: {{ $serviceName }}
             - name: RELEASE_RUNNER_RELEASE_URL
@@ -220,6 +216,9 @@ spec:
           {{- end }}
           {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
+            - name: podinfo
+              mountPath: /etc/podinfo
+              readOnly: true
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
               name: release-runner-truststore
@@ -243,6 +242,12 @@ spec:
           {{- end }}
       {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
       volumes:
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "annotations"
+                fieldRef:
+                  fieldPath: metadata.annotations
         {{- if .Values.runner.truststore }}
         - name: release-runner-truststore
           secret:
