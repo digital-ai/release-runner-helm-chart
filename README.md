@@ -166,7 +166,7 @@ kubectl delete namespace runner
 | `replicaCount`                          | Number of Digital.ai Release Runner replicas to deploy                                                                                   | `1`             |
 | `updateStrategy.type`                   | Update strategy type for Digital.ai Release Runner statefulset                                                                           | `RollingUpdate` |
 | `statefulsetLabels`                     | Digital.ai Release Runner statefulset labels. Evaluated as a template                                                                    | `{}`            |
-| `statefulsetCapabilityAnnotations`      | Digital.ai Release Runner statefulset Capability Schema labels. They should be prefixed with `digital.ai/` Evaluated as a template        | `{}`            |
+| `podCapabilityAnnotations`      | Digital.ai Release Runner statefulset Capability Schema labels. They should be prefixed with `digital.ai/` Evaluated as a template        | `{}`            |
 | `priorityClassName`                     | Name of the priority class to be used by Digital.ai Release Runner pods, priority class needs to be created beforehand                   | `""`            |
 | `podAffinityPreset`                     | Pod affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                      | `""`            |
 | `podAntiAffinityPreset`                 | Pod anti-affinity preset. Ignored if `affinity` is set. Allowed values: `soft` or `hard`                                                 | `soft`          |

@@ -36,9 +36,6 @@ metadata:
     {{- if .Values.commonAnnotations }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
     {{- end }}
-    {{- if .Values.statefulsetCapabilityAnnotations }}
-    {{- include "common.tplvalues.render" (dict "value" .Values.statefulsetCapabilityAnnotations "context" $) | nindent 4 }}
-    {{- end }}
 spec:
   serviceName: {{ $serviceName }}
   podManagementPolicy: {{ .Values.podManagementPolicy }}
@@ -65,6 +62,9 @@ spec:
         checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
         {{- if .Values.podAnnotations }}
         {{- include "common.tplvalues.render" (dict "value" .Values.podAnnotations "context" $) | nindent 8 }}
+        {{- end }}
+        {{- if .Values.podCapabilityAnnotations }}
+        {{- include "common.tplvalues.render" (dict "value" .Values.podCapabilityAnnotations "context" $) | nindent 4 }}
         {{- end }}
     spec:
       {{- if .Values.schedulerName }}
@@ -217,7 +217,7 @@ spec:
           {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
             - name: podinfo
-              mountPath: /etc/podinfo
+              mountPath: /workspace/podinfo
               readOnly: true
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
@@ -248,6 +248,15 @@ spec:
               - path: "annotations"
                 fieldRef:
                   fieldPath: metadata.annotations
+              - path: "labels"
+                fieldRef:
+                  fieldPath: metadata.labels
+              - path: "pod_name"
+                fieldRef:
+                  fieldPath: metadata.name
+              - path: "namespace"
+                fieldRef:
+                  fieldPath: metadata.namespace
         {{- if .Values.runner.truststore }}
         - name: release-runner-truststore
           secret:
