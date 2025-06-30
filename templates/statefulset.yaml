@@ -32,10 +32,9 @@ metadata:
     {{- if .Values.commonLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.commonLabels "context" $ ) | nindent 4 }}
     {{- end }}
-  annotations:
-    {{- if .Values.commonAnnotations }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
-    {{- end }}
+  {{- if .Values.commonAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.commonAnnotations "context" $ ) | nindent 4 }}
+  {{- end }}
 spec:
   serviceName: {{ $serviceName }}
   podManagementPolicy: {{ .Values.podManagementPolicy }}
@@ -216,9 +215,6 @@ spec:
           {{- end }}
           {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
           volumeMounts:
-            - name: podinfo
-              mountPath: /workspace/podinfo
-              readOnly: true
             {{- if .Values.runner.truststore }}
             - mountPath: /workspace/truststore.p12
               name: release-runner-truststore
@@ -242,21 +238,6 @@ spec:
           {{- end }}
       {{- if or .Values.runner.truststore .Values.runner.restClientCA .Values.extraVolumeMounts .Values.emptyDirPaths }}
       volumes:
-        - name: podinfo
-          downwardAPI:
-            items:
-              - path: "annotations"
-                fieldRef:
-                  fieldPath: metadata.annotations
-              - path: "labels"
-                fieldRef:
-                  fieldPath: metadata.labels
-              - path: "pod_name"
-                fieldRef:
-                  fieldPath: metadata.name
-              - path: "namespace"
-                fieldRef:
-                  fieldPath: metadata.namespace
         {{- if .Values.runner.truststore }}
         - name: release-runner-truststore
           secret:
