@@ -20,6 +20,24 @@ runner:
   ## @param runner.kubernetes.passedSaAnnotations comma separated list of annotations to pass from the runner to the executor ServiceAccount
   kubernetes:
     passedSaAnnotations: ""
+  ## @param runner.executorSecurityContext [object] Security context configuration for executor pods created by the runner
+  ## These settings control the security context of pods that the runner creates to execute tasks
+  ## Note: These are passed as environment variables to the runner through runner.config
+  executorSecurityContext:
+    ## @param runner.executorSecurityContext.enabled Enable security context for executor pods
+    enabled: false
+    ## @param runner.executorSecurityContext.runAsUser User ID for executor pods
+    runAsUser: 1001
+    ## @param runner.executorSecurityContext.runAsGroup Group ID for executor pods
+    runAsGroup: 1001
+    ## @param runner.executorSecurityContext.fsGroup Filesystem group for executor pods
+    fsGroup: 1001
+    ## @param runner.executorSecurityContext.runAsNonRoot Force executor pods to run as non-root user
+    runAsNonRoot: true
+    ## @param runner.executorSecurityContext.allowPrivilegeEscalation Allow privilege escalation in executor pods
+    allowPrivilegeEscalation: false
+    ## @param runner.executorSecurityContext.readOnlyRootFilesystem Make root filesystem read-only in executor pods
+    readOnlyRootFilesystem: false
 
 
 ## @section Digital.ai Release parameters
