@@ -121,6 +121,14 @@ kubectl delete namespace runner
 | `runner.truststorePassword` | the truststore password                                                            | `nil`                                                                                                     |
 | `runner.restClientCa`       | the certificates base64 encoded value                                         | `nil`                                                                                                     |
 | `runner.config`             | Map configuration variables that are set in the config map and used as environment | `{}`                                                                                                      |
+| `runner.kubernetes.passedSaAnnotations` | comma separated list of annotations to pass from the runner to the executor ServiceAccount | `""`                                                                                                      |
+| `runner.executorSecurityContext.enabled` | Enable security context for executor pods | `true`                                                                                                      |
+| `runner.executorSecurityContext.runAsUser` | User ID for executor pods | `1001`                                                                                                      |
+| `runner.executorSecurityContext.runAsGroup` | Group ID for executor pods | `1001`                                                                                                      |
+| `runner.executorSecurityContext.fsGroup` | Filesystem group for executor pods | `1001`                                                                                                      |
+| `runner.executorSecurityContext.runAsNonRoot` | Force executor pods to run as non-root user | `true`                                                                                                      |
+| `runner.executorSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation in executor pods | `false`                                                                                                      |
+| `runner.executorSecurityContext.readOnlyRootFilesystem` | Make root filesystem read-only in executor pods | `false`                                                                                                      |
 
 ### Digital.ai Release parameters
 

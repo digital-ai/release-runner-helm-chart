@@ -170,6 +170,24 @@ spec:
             - name: RELEASE_RUNNER_REST_CLIENT_CA
               value: "/workspace/ca.pem"
             {{- end}}
+            - name: RELEASE_RUNNER_KUBERNETES_PASSED_SA_ANNOTATIONS
+              value: {{ .Values.runner.kubernetes.passedSaAnnotations }}
+            {{- if .Values.executorSecurityContext }}
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_ENABLED
+              value: "{{ .Values.executorSecurityContext.enabled }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_RUN_AS_USER
+              value: "{{ .Values.executorSecurityContext.runAsUser }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_RUN_AS_GROUP
+              value: "{{ .Values.executorSecurityContext.runAsGroup }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_FS_GROUP
+              value: "{{ .Values.executorSecurityContext.fsGroup }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_RUN_AS_NON_ROOT
+              value: "{{ .Values.executorSecurityContext.runAsNonRoot }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_ALLOW_PRIVILEGE_ESCALATION
+              value: "{{ .Values.executorSecurityContext.allowPrivilegeEscalation }}"
+            - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_READ_ONLY_ROOT_FILESYSTEM
+              value: "{{ .Values.executorSecurityContext.readOnlyRootFilesystem }}"
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
