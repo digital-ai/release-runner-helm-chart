@@ -122,13 +122,6 @@ kubectl delete namespace runner
 | `runner.restClientCa`       | the certificates base64 encoded value                                         | `nil`                                                                                                     |
 | `runner.config`             | Map configuration variables that are set in the config map and used as environment | `{}`                                                                                                      |
 | `runner.kubernetes.passedSaAnnotations` | comma separated list of annotations to pass from the runner to the executor ServiceAccount | `""`                                                                                                      |
-| `runner.executorSecurityContext.enabled` | Enable security context for executor pods | `true`                                                                                                      |
-| `runner.executorSecurityContext.runAsUser` | User ID for executor pods | `1001`                                                                                                      |
-| `runner.executorSecurityContext.runAsGroup` | Group ID for executor pods | `1001`                                                                                                      |
-| `runner.executorSecurityContext.fsGroup` | Filesystem group for executor pods | `1001`                                                                                                      |
-| `runner.executorSecurityContext.runAsNonRoot` | Force executor pods to run as non-root user | `true`                                                                                                      |
-| `runner.executorSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation in executor pods | `false`                                                                                                      |
-| `runner.executorSecurityContext.readOnlyRootFilesystem` | Make root filesystem read-only in executor pods | `false`                                                                                                      |
 
 ### Digital.ai Release parameters
 
@@ -191,6 +184,13 @@ kubectl delete namespace runner
 | `containerSecurityContext.enabled`      | Enabled Digital.ai Release Runner containers' Security Context                                                                                       | `false`         |
 | `containerSecurityContext.runAsUser`    | Set Digital.ai Release Runner containers' Security Context runAsUser                                                                                 | `1001`          |
 | `containerSecurityContext.runAsNonRoot` | Set Digital.ai Release Runner container's Security Context runAsNonRoot                                                                              | `true`          |
+| `executorSecurityContext.enabled` | Enable security context for executor pods | `false`                                                                                                      |
+| `executorSecurityContext.runAsUser` | User ID for executor pods | `1001`                                                                                                      |
+| `executorSecurityContext.runAsGroup` | Group ID for executor pods | `1001`                                                                                                      |
+| `executorSecurityContext.fsGroup` | Filesystem group for executor pods | `1001`                                                                                                      |
+| `executorSecurityContext.runAsNonRoot` | Force executor pods to run as non-root user | `true`                                                                                                      |
+| `executorSecurityContext.allowPrivilegeEscalation` | Allow privilege escalation in executor pods | `false`                                                                                                      |
+| `executorSecurityContext.readOnlyRootFilesystem` | Make root filesystem read-only in executor pods | `false`                                                                                                      |
 | `extraVolumeMounts`                     | Optionally specify extra list of additional volumeMounts                                                                                 | `[]`            |
 | `extraVolumes`                          | Optionally specify extra list of additional volumes .                                                                                    | `[]`            |
 | `hostAliases`                           | Deployment pod host aliases                                                                                                              | `[]`            |
