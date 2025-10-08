@@ -240,6 +240,25 @@ containerSecurityContext:
   seccompProfile:
     type: RuntimeDefault
 
+## Security context for executor pods created by the runner
+## These settings control the security context of pods that the runner creates to execute tasks
+## @param executorSecurityContext.enabled Enable security context for executor pods
+## @param executorSecurityContext.runAsUser User ID for executor pods
+## @param executorSecurityContext.runAsGroup Group ID for executor pods
+## @param executorSecurityContext.fsGroup Filesystem group for executor pods
+## @param executorSecurityContext.runAsNonRoot Force executor pods to run as non-root user
+## @param executorSecurityContext.allowPrivilegeEscalation Allow privilege escalation in executor pods
+## @param executorSecurityContext.readOnlyRootFilesystem Make root filesystem read-only in executor pods
+##
+executorSecurityContext:
+  enabled: false
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+
 ## @param extraVolumeMounts Optionally specify extra list of additional volumeMounts
 ## Examples:
 ## extraVolumeMounts:
