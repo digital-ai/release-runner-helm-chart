@@ -17,6 +17,9 @@ runner:
   restClientCA:
   ## @param runner.config [object] Map configuration variables that are set in the config map and used as environment
   config:
+  ## @param runner.kubernetes.passedSaAnnotations comma separated list of annotations to pass from the runner to the executor ServiceAccount
+  kubernetes:
+    passedSaAnnotations: ""
 
 
 ## @section Digital.ai Release parameters
@@ -194,6 +197,27 @@ podSecurityContext:
   enabled: false
   runAsUser: 1001
   fsGroup: 1001
+
+## @section Executor Pod Security Context
+##
+## @param executorSecurityContext [object] Security context configuration for executor pods created by the runner
+## These settings control the security context of pods that the runner creates to execute tasks
+##
+executorSecurityContext:
+  ## @param executorSecurityContext.enabled Enable security context for executor pods
+  enabled: false
+  ## @param executorSecurityContext.runAsUser User ID for executor pods
+  runAsUser: 1001
+  ## @param executorSecurityContext.runAsGroup Group ID for executor pods
+  runAsGroup: 1001
+  ## @param executorSecurityContext.fsGroup Filesystem group for executor pods
+  fsGroup: 1001
+  ## @param executorSecurityContext.runAsNonRoot Force executor pods to run as non-root user
+  runAsNonRoot: true
+  ## @param executorSecurityContext.allowPrivilegeEscalation Allow privilege escalation in executor pods
+  allowPrivilegeEscalation: false
+  ## @param executorSecurityContext.readOnlyRootFilesystem Make root filesystem read-only in executor pods
+  readOnlyRootFilesystem: false
 
 ## @param containerSecurityContext.enabled Enabled Digital.ai Release Runner containers' Security Context
 ## @param containerSecurityContext.runAsUser Set Digital.ai Release Runner containers' Security Context runAsUser
