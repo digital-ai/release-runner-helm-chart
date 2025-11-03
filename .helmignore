@@ -22,9 +22,12 @@
 .idea/
 *.tmproj
 .vscode/
+*.iml
 
 # Other
 values-custom-*.yaml
 index.yaml
 build/
 helm/
+scripts/
+*.sh

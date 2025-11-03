@@ -28,6 +28,10 @@ runner:
 release:
   ## @param release.registrationToken is the token you create in Release that the runner will use to register itself.
   registrationToken:
+  ## @param release.registrationTokenSecretName is the name of an existing secret that contains the registration token.
+  registrationTokenSecretName:
+  ## @param release.registrationTokenSecretKey is the key in the existing secret that contains the registration token.
+  registrationTokenSecretKey: token
   ## @param release.url is the url of your release instance.
   url:
 

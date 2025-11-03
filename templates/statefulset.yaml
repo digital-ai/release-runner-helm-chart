@@ -142,11 +142,19 @@ spec:
               value: {{ $serviceName }}
             - name: RELEASE_RUNNER_RELEASE_URL
               value: "{{ required "Use --set release.url=<value> to define the Digital.ai Release URL" .Values.release.url }}"
+            {{- if .Values.release.registrationToken }}
             - name: RELEASE_RUNNER_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: {{ include "common.names.fullname" . }}-registration-token
                   key: token
+            {{- else}}
+            - name: RELEASE_RUNNER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: "{{ required "Use --set release.registrationToken=<value> or --set release.registrationTokenSecretName=<value> to define the Digital.ai Release registration token" .Values.release.registrationTokenSecretName }}"
+                  key: {{.Values.release.registrationTokenSecretKey}}
+            {{- end}}
             - name: RELEASE_RUNNER_KUBERNETES_REGISTRY_MAPPING_SECRET_NAME
               value: {{ include "common.names.fullname" . }}-registry-mapping
             - name: RELEASE_RUNNER_CAPABILITIES
