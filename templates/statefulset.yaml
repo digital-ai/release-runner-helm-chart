@@ -190,6 +190,10 @@ spec:
             - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_READ_ONLY_ROOT_FILESYSTEM
               value: "{{ .Values.executorSecurityContext.readOnlyRootFilesystem }}"
             {{- end }}
+            {{- if .Values.runner.executorLabels }}
+            - name: RELEASE_RUNNER_KUBERNETES_EXECUTOR_LABELS
+              value: {{ .Values.runner.executorLabels | toJson | quote }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
