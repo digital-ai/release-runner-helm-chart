@@ -20,6 +20,14 @@ runner:
   ## @param runner.kubernetes.passedSaAnnotations comma separated list of annotations to pass from the runner to the executor ServiceAccount
   kubernetes:
     passedSaAnnotations: ""
+  ## @param runner.executorLabels Labels to add to executor pods created by the runner
+  ## E.g.:
+  ## runner:
+  ##   executorLabels:
+  ##     environment: production
+  ##     team: devops
+  ##
+  executorLabels: { }
 
 
 ## @section Digital.ai Release parameters
