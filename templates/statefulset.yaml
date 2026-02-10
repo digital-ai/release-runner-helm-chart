@@ -190,6 +190,22 @@ spec:
             - name: RELEASE_RUNNER_EXECUTOR_SECURITY_CONTEXT_READ_ONLY_ROOT_FILESYSTEM
               value: "{{ .Values.executorSecurityContext.readOnlyRootFilesystem }}"
             {{- end }}
+            {{- if .Values.runner.metadata.clusterName }}
+            - name: RELEASE_RUNNER_METADATA_CLUSTER_NAME
+              value: {{ .Values.runner.metadata.clusterName | quote }}
+            {{- end }}
+            {{- if .Values.runner.metadata.environment }}
+            - name: RELEASE_RUNNER_METADATA_ENVIRONMENT
+              value: {{ .Values.runner.metadata.environment | quote }}
+            {{- end }}
+            {{- if .Values.runner.metadata.dataCenter }}
+            - name: RELEASE_RUNNER_METADATA_DATA_CENTER
+              value: {{ .Values.runner.metadata.dataCenter | quote }}
+            {{- end }}
+            {{- if .Values.runner.internalTypeKey }}
+            - name: RELEASE_RUNNER_INTERNAL_TYPE_KEY
+              value: {{ .Values.runner.internalTypeKey | quote }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
