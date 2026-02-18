@@ -202,10 +202,6 @@ spec:
             - name: RELEASE_RUNNER_METADATA_DATA_CENTER
               value: {{ .Values.runner.metadata.dataCenter | quote }}
             {{- end }}
-            {{- if .Values.runner.internalTypeKey }}
-            - name: RELEASE_RUNNER_INTERNAL_TYPE_KEY
-              value: {{ .Values.runner.internalTypeKey | quote }}
-            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}

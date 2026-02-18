@@ -29,8 +29,6 @@ runner:
     environment: ""
     ## @param runner.metadata.dataCenter Data center or region identifier
     dataCenter: ""
-  ## @param runner.internalTypeKey Internal key for Digital.ai managed runners (do not set manually)
-  internalTypeKey: ""
 
 ## @section Digital.ai Release parameters
 ##
