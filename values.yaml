@@ -29,6 +29,14 @@ runner:
   ##
   executorLabels: { }
 
+  ## @section Runner metadata configuration
+  metadata:
+    ## @param runner.metadata.clusterName Name of the Kubernetes cluster where runner is deployed
+    clusterName: ""
+    ## @param runner.metadata.environment Environment identifier (e.g., prod, staging, dev)
+    environment: ""
+    ## @param runner.metadata.dataCenter Data center or region identifier
+    dataCenter: ""
 
 ## @section Digital.ai Release parameters
 ##

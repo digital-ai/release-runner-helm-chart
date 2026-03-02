@@ -194,6 +194,18 @@ spec:
             - name: RELEASE_RUNNER_KUBERNETES_EXECUTOR_LABELS
               value: {{ .Values.runner.executorLabels | toJson | quote }}
             {{- end }}
+            {{- if .Values.runner.metadata.clusterName }}
+            - name: RELEASE_RUNNER_METADATA_CLUSTER_NAME
+              value: {{ .Values.runner.metadata.clusterName | quote }}
+            {{- end }}
+            {{- if .Values.runner.metadata.environment }}
+            - name: RELEASE_RUNNER_METADATA_ENVIRONMENT
+              value: {{ .Values.runner.metadata.environment | quote }}
+            {{- end }}
+            {{- if .Values.runner.metadata.dataCenter }}
+            - name: RELEASE_RUNNER_METADATA_DATA_CENTER
+              value: {{ .Values.runner.metadata.dataCenter | quote }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
