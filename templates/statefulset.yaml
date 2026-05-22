@@ -170,7 +170,7 @@ spec:
             {{- end}}
             {{- if .Values.runner.restClientCA }}
             - name: RELEASE_RUNNER_REST_CLIENT_CA
-              value: "/workspace/ca.pem"
+              value: {{ .Values.runner.restClientCA }}
             {{- end}}
             - name: RELEASE_RUNNER_KUBERNETES_PASSED_SA_ANNOTATIONS
               value: {{ .Values.runner.kubernetes.passedSaAnnotations }}
