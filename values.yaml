@@ -20,6 +20,23 @@ runner:
   ## @param runner.kubernetes.passedSaAnnotations comma separated list of annotations to pass from the runner to the executor ServiceAccount
   kubernetes:
     passedSaAnnotations: ""
+    ## Resources applied to the executor pods the runner creates for each job.
+    ## These are NOT the runner's own resources - see the top-level `resources` for that.
+    ## Any value left empty falls back to the runner's built-in default:
+    ## requests cpu=250m memory=128Mi, limits cpu=1000m memory=512Mi.
+    ## A request must not exceed its matching limit or the runner refuses to start.
+    job:
+      resources:
+        requests:
+          ## @param runner.kubernetes.job.resources.requests.cpu Initial CPU for each executor pod, e.g. "500m"
+          cpu: ""
+          ## @param runner.kubernetes.job.resources.requests.memory Initial memory for each executor pod, e.g. "512Mi"
+          memory: ""
+        limits:
+          ## @param runner.kubernetes.job.resources.limits.cpu Maximum CPU for each executor pod, e.g. "2"
+          cpu: ""
+          ## @param runner.kubernetes.job.resources.limits.memory Maximum memory for each executor pod, e.g. "2Gi"
+          memory: ""
   ## @param runner.executorLabels Labels to add to executor pods created by the runner
   ## E.g.:
   ## runner:

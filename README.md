@@ -122,6 +122,14 @@ kubectl delete namespace runner
 | `runner.restClientCa`       | the certificates base64 encoded value                                         | `nil`                                                                                                     |
 | `runner.config`             | Map configuration variables that are set in the config map and used as environment | `{}`                                                                                                      |
 | `runner.kubernetes.passedSaAnnotations` | comma separated list of annotations to pass from the runner to the executor ServiceAccount | `""`                                                                                                      |
+| `runner.kubernetes.job.resources.requests.cpu` | Initial CPU for each executor pod, e.g. `"500m"`. Empty uses the runner default `250m`. | `""`                                                                                     |
+| `runner.kubernetes.job.resources.requests.memory` | Initial memory for each executor pod, e.g. `"512Mi"`. Empty uses the runner default `128Mi`. | `""`                                                                                |
+| `runner.kubernetes.job.resources.limits.cpu` | Maximum CPU for each executor pod, e.g. `"2"`. Empty uses the runner default `1000m`. | `""`                                                                                       |
+| `runner.kubernetes.job.resources.limits.memory` | Maximum memory for each executor pod, e.g. `"2Gi"`. Empty uses the runner default `512Mi`. | `""`                                                                                  |
+
+> These control the resources of the **executor pods the runner creates per job**, not the runner
+> itself — use the top-level `resources` for the runner's own container. A request must not exceed its
+> matching limit; the runner validates this at startup and refuses to start otherwise.
 
 ### Digital.ai Release parameters
 

@@ -206,6 +206,28 @@ spec:
             - name: RELEASE_RUNNER_METADATA_DATA_CENTER
               value: {{ .Values.runner.metadata.dataCenter | quote }}
             {{- end }}
+            {{- with (.Values.runner.kubernetes.job).resources }}
+            {{- if .requests }}
+            {{- if .requests.cpu }}
+            - name: RELEASE_RUNNER_KUBERNETES_JOB_CPU_REQUEST
+              value: {{ .requests.cpu | quote }}
+            {{- end }}
+            {{- if .requests.memory }}
+            - name: RELEASE_RUNNER_KUBERNETES_JOB_MEMORY_REQUEST
+              value: {{ .requests.memory | quote }}
+            {{- end }}
+            {{- end }}
+            {{- if .limits }}
+            {{- if .limits.cpu }}
+            - name: RELEASE_RUNNER_KUBERNETES_JOB_CPU_LIMIT
+              value: {{ .limits.cpu | quote }}
+            {{- end }}
+            {{- if .limits.memory }}
+            - name: RELEASE_RUNNER_KUBERNETES_JOB_MEMORY_LIMIT
+              value: {{ .limits.memory | quote }}
+            {{- end }}
+            {{- end }}
+            {{- end }}
             {{- if .Values.extraEnvVars }}
             {{- include "common.tplvalues.render" (dict "value" .Values.extraEnvVars "context" $) | nindent 12 }}
             {{- end }}
